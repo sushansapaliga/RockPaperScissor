@@ -1,0 +1,130 @@
+
+.light{
+    --main-background-color-1:#e7e7e7;
+    --main-background-color-2:#afafaf;
+    --background-color-3: white;
+    --font-color-1: rgb(37, 37, 37);
+    --font-color-2: white;
+}
+
+.dark{
+    --main-background-color-1:#363636;
+    --main-background-color-2:#0f0f0f;
+    --background-color-3: rgba(0, 0, 0, 0);
+    --font-color-1: rgb(218, 218, 218);
+    --font-color-2: white;
+}
+
+html, body{
+    font-family: 'Dosis', sans-serif;
+    margin: 0px;
+    height: 100%;
+    background-image: linear-gradient(140deg, var(--main-background-color-1) -20%, var(--main-background-color-2) 80%);
+    color: var(--font-color-1);
+}
+
+/* heading section */
+header nav{
+    box-shadow: 0px 2px 10px black;
+    background-color: var(--background-color-3);
+}
+
+header nav{
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 30px;
+}
+
+header nav span.RockPaperScissor{
+    font-size: 30px;
+    font-weight: 100;
+}
+
+header nav span.menuBtn {
+    display: block;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: 200ms ease-out;
+}
+
+header nav span.menuBtn:hover{
+    background-color: grey;
+}
+
+/* menu drawer */
+.menuBackground{
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    display: none;
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0.349);
+    overflow-x: hidden;
+}
+
+.menuContent{
+    position: relative;
+    float: right;
+    height: 100%;
+    padding: 50px;
+    margin-right: -50%;
+    min-width: 30%;
+    background-color: rgb(48, 48, 48);
+    transition: margin 200ms ;
+    border-radius: 10px 0px 0px 10px ;
+    color: var(--font-color-2);
+}
+
+.menuBackground.open{
+    display: block;
+}
+
+.menuContent.active{
+    margin-right: 0%;
+}
+
+.menuBackground .menuContent .menuHeading{
+    display: flex;
+    justify-content: space-between;
+    font-size: 30px;
+}
+
+.menuHeading .menuBtn{
+    padding: 10px;
+    border-radius: 50%;
+    margin-top: -10px ;
+    cursor: pointer;
+}
+
+.menuBackground .menuContent .menuBody{
+    padding: 10px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.menuBackground .menuContent .menuBody .menuUserRelated{
+    font-size: 20px;
+}
+
+.menuBackground .menuContent .menuBody .menuUserRelated span{
+    padding: 10px;
+    color: orange;
+    margin: -5px 0px 5px 20px;
+}
+
+.userSetting .settingHeading{
+    font-size: 30px;
+}
+
+.userSetting .darkMode{
+    display: flex;
+    align-items: baseline;
+    font-size: 24px;
+}
+
+.userSetting .darkMode span.darkModeText{
+    padding: 18px;
+}

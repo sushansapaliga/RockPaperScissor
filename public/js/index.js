@@ -4,6 +4,9 @@ const menuContent = document.querySelector(".menuContent");
 const menuBtnClose = document.querySelector(".menuHeading .menuBtn");
 const bodyHTML = document.querySelector("body");
 const darkModeCheckBox = document.querySelector(".darkModeCheckBox");
+const changeUserNameBackground = document.querySelector(".changeUserNameBackground");
+const changeUserNameSection = document.querySelector(".changeUserNameSection");
+const editUserName = document.querySelector(".editUserName");
 
 //check screen width with in acceptable range
 /* code has been moved to function fetchTheTheme */
@@ -28,18 +31,9 @@ menuBtnClose.addEventListener("click", ()=>{
 
 menuBackground.addEventListener("click", (e)=>{
 
-    console.log(e.target.classList);
+    //console.log(e.target.classList);
 
-    if(!( e.target.classList.length == 0 
-        || e.target.classList.contains('menuContent')
-        || e.target.classList.contains('menuHeading')
-        || e.target.classList.contains('menuUserRelated')
-        || e.target.classList.contains('userSetting')
-        || e.target.classList.contains('settingHeading')
-        || e.target.classList.contains('darkModeText')
-        || e.target.classList.contains('round')
-        || e.target.classList.contains('darkModeCheckBox')
-        )){
+    if(e.target.classList.contains("menuBackground")){
         menuContent.classList.remove("active");
         setTimeout(()=>{
             menuBackground.classList.remove("open");
@@ -52,7 +46,7 @@ function fetchTheTheme(){
 
     const mode = localStorage.getItem("rockpaperscissor-sushan");
 
-    if(screen.width < 700){
+    if(screen.width < 900){
         bodyHTML.innerHTML = 'Cannot display the contents because of smaller screen size. Switch to desktop view for better experience.';
     }
 
@@ -77,5 +71,33 @@ darkModeCheckBox.addEventListener("change", ()=>{
         bodyHTML.classList.remove("dark");
         bodyHTML.classList.add("light");
         localStorage.setItem("rockpaperscissor-sushan", "lightMode");
+    }
+});
+
+// edit user details/name
+editUserName.addEventListener("click", ()=>{
+
+    //to close the menu drawer
+    menuContent.classList.remove("active");
+    setTimeout(()=>{
+        menuBackground.classList.remove("open");
+    },200);
+
+    //real code .....
+    changeUserNameBackground.classList.add("open");
+    setTimeout(()=>{
+        changeUserNameSection.classList.add("active");
+    },200);
+});
+
+changeUserNameBackground.addEventListener("click", (e)=>{
+
+    //console.log(e.target.classList);
+
+    if(e.target.classList.contains("changeUserNameBackground")){
+        changeUserNameSection.classList.remove("active");
+        setTimeout(()=>{
+            changeUserNameBackground.classList.remove("open");
+        },200);
     }
 });

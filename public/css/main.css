@@ -170,7 +170,7 @@ header nav span.menuBtn:hover{
 }
 
 .changeUserNameSection{
-    position: absolute;
+    position: relative;
     margin: -100% 20%;
     width: 60%;
     padding: 20px;
@@ -293,4 +293,172 @@ header nav span.menuBtn:hover{
 
 .onlinePlayerDisplay table tr td button:hover{
     background-color: orange;
+}
+
+/* notification related */
+.notifier{
+    display: block;
+    position: absolute;
+    top: 130px;
+    right: 55px;
+}
+
+.notifier .messageNotification{
+    position: relative;
+    padding: 10px;
+    background-color: rgb(255, 80, 80);
+    /* background-color: lightcoral; */
+    color: black;
+    border-radius: 40px;
+    transition: 200ms;
+}
+
+.notifier .messageNotification:hover{
+    cursor: pointer;
+    box-shadow: 0px 0px 15px black;
+}
+
+/* request panel */
+.requestPanelBackground{
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    display: none;
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0.349);
+    overflow-x: hidden;
+}
+
+.requestPanelBackground.open{
+    display: block;
+}
+
+.notificationPanel{
+    position: relative;
+    margin: -100% 20%;
+    width: 60%;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: var(--main-background-color-1);
+    transition: margin 200ms;
+}
+
+.notificationPanel.active{
+    margin: 60px 20%;
+}
+
+.notificationPanel .notificationPanelHeading{
+    text-align: center;
+    font-size: 24px;
+}
+
+.notificationPanel .noDataToShow{
+    text-align: center;
+    display: none;
+}
+
+.notificationPanel .noDataToShow.show{
+    display: block;
+}
+
+.notificationPanel .showPlayerWhoChallenged{
+    display: none;
+}
+
+.notificationPanel .showPlayerWhoChallenged.show{
+    display: block;
+}
+
+.showPlayerWhoChallenged table{
+    margin-top: 10px;
+    width: 100%;
+}
+
+.showPlayerWhoChallenged table tr{
+    text-align: center;
+    border-top: 2px solid grey;
+    border-bottom: 2px solid grey;
+    font-size: 18px;
+}
+
+.showPlayerWhoChallenged table tr th, .showPlayerWhoChallenged table tr td{
+    padding: 6px;
+}
+
+.showPlayerWhoChallenged table tr td button{
+    padding: 4px 24px;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    background-color: rgb(255, 188, 62);
+    transition: background-color 200ms;
+}
+
+.showPlayerWhoChallenged table tr td button:hover{
+    background-color: orange;
+}
+
+/* action model */
+.actionModelBackgound{
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    display: none;
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0.349);
+    overflow-x: hidden;
+}
+
+.actionModelBackgound.open{
+    display: block;
+}
+
+.actionModelBackgound .actionModel{
+    position: relative;
+    margin: -100% 30%;
+    width: 40%;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: var(--main-background-color-1);
+    transition: margin 200ms;
+}
+
+.actionModel.active{
+    margin: 60px 30%;
+}
+
+.actionModel div{
+    text-align: center;
+}
+
+.actionModel .actionModelHeader{
+    font-size: 24px;
+}
+
+/* flyer */
+.flyerBody{
+    position: absolute;
+    top:0;
+    margin: -100% 35%;
+    width: 30%;
+    border-radius: 0px 0px 10px 10px;
+    padding: 40px 20px 20px 20px;
+    text-align: center;
+    font-size: 20px;
+    box-shadow: 0px 0px 6px black;
+}
+
+.flyerBody.open{
+    margin: 0px 35%;
+}
+
+.flyerBody.open.success{
+    background-color: rgb(0, 172, 0);
+    color: white;
+}
+
+.pageLoading{
+    display: none;
 }

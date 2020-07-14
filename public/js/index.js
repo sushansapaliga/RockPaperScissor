@@ -7,9 +7,12 @@ const darkModeCheckBox = document.querySelector(".darkModeCheckBox");
 const changeUserNameBackground = document.querySelector(".changeUserNameBackground");
 const changeUserNameSection = document.querySelector(".changeUserNameSection");
 const editUserName = document.querySelector(".editUserName");
+const openRequestPanel = document.querySelector(".messageNotification");
+const requestPanelBackground = document.querySelector(".requestPanelBackground");
+const notificationPanel = document.querySelector(".notificationPanel");
 
 //check screen width with in acceptable range
-/* code has been moved to function fetchTheTheme */
+/* code has been moved to function fetchTheTheme() */
 
 
 // menu drawer
@@ -50,13 +53,13 @@ function fetchTheTheme(){
         bodyHTML.innerHTML = 'Cannot display the contents because of smaller screen size. Switch to desktop view for better experience.';
     }
 
-    if( mode == null){
-        localStorage.setItem("rockpaperscissor-sushan", "darkMode");
-        darkModeCheckBox.checked = true;
-    }else if(mode == "lightMode"){
+    if(mode == "lightMode"){
         bodyHTML.classList.remove("dark");
         bodyHTML.classList.add("light");
     }else if(mode == "darkMode"){
+        darkModeCheckBox.checked = true;
+    }else{
+        localStorage.setItem("rockpaperscissor-sushan", "darkMode");
         darkModeCheckBox.checked = true;
     }
 }
@@ -98,6 +101,25 @@ changeUserNameBackground.addEventListener("click", (e)=>{
         changeUserNameSection.classList.remove("active");
         setTimeout(()=>{
             changeUserNameBackground.classList.remove("open");
+        },200);
+    }
+});
+
+// request panel 
+openRequestPanel.addEventListener("click",()=>{
+
+    requestPanelBackground.classList.add("open");
+    setTimeout(()=>{
+        notificationPanel.classList.add("active");
+    },200);
+});
+
+requestPanelBackground.addEventListener("click",(e)=>{
+
+    if(e.target.classList.contains("requestPanelBackground")){
+        notificationPanel.classList.remove("active");
+        setTimeout(()=>{
+            requestPanelBackground.classList.remove("open");
         },200);
     }
 });

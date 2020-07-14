@@ -11,17 +11,24 @@
     <!-- custom css -->
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/toggleSwitch.css">
+    <link rel="stylesheet" href="css/loader.css">
 
   </head>
   <body class="dark" onload="fetchTheTheme()">
+
+    <!-- precautions - noscripts -->
     <noscript>
       This page wont work unless you enable javascript.
     </noscript>
 
+    <!-- navbar -->
     <header>
       <nav>
         <span class="RockPaperScissor">
           Rock, Paper and Scissor
+          <span>
+            <small style="font-size: 14px;color: orange;">BETA</small>
+          </span>
         </span>
         <span class="menuBtn">
           <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-three-dots-vertical" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -77,7 +84,7 @@
     </div>
 
     <!-- user name change plate -->
-    <div class="changeUserNameBackground">
+    <div class="changeUserNameBackground ">
       <div class="changeUserNameSection">
         <div class="headingUserNameChange">
           Change Your Game Name
@@ -94,9 +101,9 @@
     </div>
 
     <!-- main body display -->
-    <div class="mainBody">
+    <div class="mainBody pageLoading">
       <div class="row">
-        <div class="col-md-5">
+        <div class="col-5">
           <div class="playWithBot cardBackground">
             <div class="playSectionHeading">
               Play With BOT People
@@ -106,7 +113,7 @@
             <a href="#" class="challengeTheBot">Challenge The BOT</a>
           </div>
         </div>
-        <div class="col-md-7">
+        <div class="col-7">
           <div class="playWithPlayer cardBackground">
             <div class="playSectionHeading">
               Play With REAL People
@@ -118,7 +125,7 @@
             <div class="onlinePlayerDisplay">
               <table>
                 <tr class="tableHeader">
-                  <th>Player Name</th>
+                  <th>Player Name [ Online ]</th>
                   <th> Send The Request </th>
                 </tr>
                 <tbody>
@@ -207,7 +214,117 @@
       </div>
     </div>
 
+    <!-- notification button/model -->
+    <div class="notifier pageLoading">
+      <div class="messageNotification">
+        <span>0</span>
+        Challenges
+      </div>
+    </div>
 
+    <!-- Request Panel -->
+    <div class="requestPanelBackground">
+      <div class="notificationPanel">
+        <div class="notificationPanelHeading">
+          People Who Have Challenged You
+        </div>
+        <hr>
+        <div class="noDataToShow show">
+          No One Has Challenged You. <br> You Are KING!
+        </div>
+        <div class="showPlayerWhoChallenged show">
+          <table>
+            <tr>
+              <th>Player Name</th>
+              <th>Challenge Request</th>
+            </tr>
+            <tr>
+              <td>Mr Robot</td>
+              <td>
+                <button>
+                  <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z"/>
+                    <path fill-rule="evenodd" d="M7.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0V8z"/>
+                  </svg>
+                  Accept
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>Mr Robot</td>
+              <td>
+                <button>
+                  <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z"/>
+                    <path fill-rule="evenodd" d="M7.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0V8z"/>
+                  </svg>
+                  Accept
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>Mr Robot</td>
+              <td>
+                <button>
+                  <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z"/>
+                    <path fill-rule="evenodd" d="M7.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0V8z"/>
+                  </svg>
+                  Accept
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>Mr Robot</td>
+              <td>
+                <button>
+                  <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z"/>
+                    <path fill-rule="evenodd" d="M7.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0V8z"/>
+                  </svg>
+                  Accept
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>Mr Robot</td>
+              <td>
+                <button>
+                  <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z"/>
+                    <path fill-rule="evenodd" d="M7.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0V8z"/>
+                  </svg>
+                  Accept
+                </button>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action model - after accepting request, after sending request, updating gamer name, when user lands on the page -->
+    <div class="actionModelBackgound open">
+      <div class="actionModel active">
+        <div class="actionModelHeader">
+          Loading
+        </div>
+        <hr>
+        <div class="actionModelBody">
+          Setting Up Things For You...
+        </div>
+        <div>
+          <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- flyer -->
+    <div class="flyerBody">
+      <div class="flyerMessage">
+        {{ Successfully Updated. }}
+      </div>
+    </div>
 
   </body>
 

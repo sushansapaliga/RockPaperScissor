@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="css/loader.css">
 
   </head>
-  <body class="dark" onload="fetchTheTheme()">
+  <body class="dark">
 
     <!-- precautions - noscripts -->
     <noscript>
@@ -55,7 +55,9 @@
         <hr>
         <div class="menuBody">
           <div class="menuUserRelated">
-            {{ Guest Name }}
+            <span class="userNameMenuDisplay">
+              {{ Guest Name }}
+            </span>
             <span class="editUserName">
               <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-pencil" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" d="M11.293 1.293a1 1 0 0 1 1.414 0l2 2a1 1 0 0 1 0 1.414l-9 9a1 1 0 0 1-.39.242l-3 1a1 1 0 0 1-1.266-1.265l1-3a1 1 0 0 1 .242-.391l9-9zM12 2l2 2-9 9-3 1 1-3 9-9z"/>
@@ -91,7 +93,7 @@
         </div>
         <hr>
         <form class="changeUserNameForm">
-          <input type="text" class="userName" name="userGameName" value="{{ Guest Name }}" required>
+          <input type="text" class="userName" name="userGameName" required>
           <br>
           <small>No Special Character except _ , !</small>
           <br>
@@ -329,9 +331,19 @@
   </body>
 
   <!-- Script related to firebase -->
-  <script defer src="/__/firebase/7.16.0/firebase-app.js"></script>
+  <!-- <script defer src="/__/firebase/7.16.0/firebase-app.js"></script>
   <script defer src="/__/firebase/7.16.0/firebase-auth.js"></script>
-  <script defer src="/__/firebase/init.js"></script>
+  <script src="/__/firebase/7.16.0/firebase-firestore.js"></script>
+  <script src="/__/firebase/7.16.0/firebase-functions.js"></script> -->
+
+  <!-- The lastest version is firebase is not used because to remove possible errors: firebase is not defined -->
+  <script src="/__/firebase/7.15.0/firebase-app.js"></script>
+  <script src="/__/firebase/7.15.0/firebase-auth.js"></script>
+  <script src="/__/firebase/7.15.0/firebase-firestore.js"></script>
+  <script src="/__/firebase/7.15.0/firebase-functions.js"></script>
+
+  <!-- initialize the firebase -->
+  <script src="/__/firebase/init.js"></script>
 
   <!-- custom script -->
   <script src="js/index.js"></script>

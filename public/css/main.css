@@ -133,7 +133,7 @@ header nav span.menuBtn:hover{
     font-size: 20px;
 }
 
-.menuBackground .menuContent .menuBody .menuUserRelated span{
+.menuBackground .menuContent .menuBody .menuUserRelated span.editUserName{
     padding: 10px;
     color: orange;
     margin: -5px 0px 5px 20px;

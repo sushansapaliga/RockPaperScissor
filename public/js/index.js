@@ -10,8 +10,12 @@ const editUserName = document.querySelector(".editUserName");
 const openRequestPanel = document.querySelector(".messageNotification");
 const requestPanelBackground = document.querySelector(".requestPanelBackground");
 const notificationPanel = document.querySelector(".notificationPanel");
+const actionModelBackgound = document.querySelector(".actionModelBackgound");
+const actionModel = document.querySelector(".actionModel");
+const actionModelHeader = document.querySelector(".actionModelHeader");
+const actionModelBody = document.querySelector(".actionModelBody");
 
-//check screen width with in acceptable range
+//check screen width is with-in acceptable range
 /* code has been moved to function fetchTheTheme() */
 
 
@@ -33,8 +37,6 @@ menuBtnClose.addEventListener("click", ()=>{
 });
 
 menuBackground.addEventListener("click", (e)=>{
-
-    //console.log(e.target.classList);
 
     if(e.target.classList.contains("menuBackground")){
         menuContent.classList.remove("active");
@@ -95,8 +97,6 @@ editUserName.addEventListener("click", ()=>{
 
 changeUserNameBackground.addEventListener("click", (e)=>{
 
-    //console.log(e.target.classList);
-
     if(e.target.classList.contains("changeUserNameBackground")){
         changeUserNameSection.classList.remove("active");
         setTimeout(()=>{
@@ -122,4 +122,70 @@ requestPanelBackground.addEventListener("click",(e)=>{
             requestPanelBackground.classList.remove("open");
         },200);
     }
+});
+
+//action panel handler
+function actionPanelOpen(heading, body){
+
+    actionModelHeader.innerHTML = heading;
+    actionModelBody.innerHTML = body;
+    actionModelBackgound.classList.add("open");
+    setTimeout(()=>{
+        actionModel.classList.add("active");
+    },200);
+}
+
+function actionPanelClose(){
+
+    actionModel.classList.remove("active");
+    setTimeout(()=>{
+        actionModelBackgound.classList.remove("open");
+        actionModelHeader.innerHTML = "";
+        actionModelBody.innerHTML = "";
+    },200);
+}
+
+//updates the user front end 
+function updateDisplayUserName(){
+    var user = firebase.auth().currentUser;
+    
+    if(user){
+        var displayName = user.displayName;
+        document.querySelector(".userNameMenuDisplay").innerHTML = displayName;
+        document.querySelector(".userName").value = displayName;
+    }
+}
+
+// signing in new user
+function signInUser(){
+
+    firebase.auth().signInAnonymously()
+    .then(()=>{
+        //opens the edit the name panel
+        editUserName.click();
+
+        var user = firebase.auth().currentUser;
+
+        user.updateProfile({
+            displayName: 'Mr Robot'
+        }).then(()=>{
+            updateDisplayUserName();
+        });
+    });
+}
+
+// signing in users and creating a profile
+firebase.auth().onAuthStateChanged((user)=>{
+    
+    fetchTheTheme();
+
+    if(user){
+        actionPanelClose();
+        // TODO: show proper view 
+        // TODO: set user name 
+        updateDisplayUserName();
+    }else{
+        signInUser();
+    }
+
 });

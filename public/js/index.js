@@ -7,6 +7,7 @@ const darkModeCheckBox = document.querySelector(".darkModeCheckBox");
 const changeUserNameBackground = document.querySelector(".changeUserNameBackground");
 const changeUserNameSection = document.querySelector(".changeUserNameSection");
 const editUserName = document.querySelector(".editUserName");
+const changeUserNameForm = document.querySelector(".changeUserNameForm");
 const openRequestPanel = document.querySelector(".messageNotification");
 const requestPanelBackground = document.querySelector(".requestPanelBackground");
 const notificationPanel = document.querySelector(".notificationPanel");
@@ -79,14 +80,11 @@ darkModeCheckBox.addEventListener("change", ()=>{
     }
 });
 
-// edit user details/name
+// edit user/game name
 editUserName.addEventListener("click", ()=>{
 
     //to close the menu drawer
-    menuContent.classList.remove("active");
-    setTimeout(()=>{
-        menuBackground.classList.remove("open");
-    },200);
+    menuBtnClose.click();
 
     //real code .....
     changeUserNameBackground.classList.add("open");
@@ -103,6 +101,48 @@ changeUserNameBackground.addEventListener("click", (e)=>{
             changeUserNameBackground.classList.remove("open");
         },200);
     }
+});
+
+changeUserNameForm.addEventListener("submit",(e)=>{
+    e.preventDefault();
+
+    const userName = changeUserNameForm.userGameName.value;
+
+    if(userName.length == 0){
+        flyerModel("Cannot Set Your Game Name As Empty. Update Failed.", "failed");
+        return;
+    }else if(/[^A-Za-z_,!\d]/.test(userName)){
+        flyerModel("Special Characters In Your Game Name. Update Failed.", "failed");
+        return;
+    }else if(userName.length > 20){
+        flyerModel("Your Game Name Cannot Exceed More Than 20 Characters. Update Failed.", "failed");
+        return;
+    }
+
+    changeUserNameBackground.click();
+    setTimeout(()=>{
+        actionPanelOpen("Updating", "Updating Your Game Name...");
+    },200);
+
+    const requestForNameChange = firebase.functions().httpsCallable("requestForNameChange");
+    requestForNameChange({
+        userName: userName
+    }).then(()=>{
+
+        // PATCH: User name is not updated even after the displayName is updated
+        let user = firebase.auth().currentUser;
+        user.updateProfile({
+            displayName: userName
+        }).then(()=>{
+            flyerModel("Successfully Updated Your Name", "success");
+            actionPanelClose();
+            updateDisplayUserName();
+        });
+    }).catch((e)=>{
+        flyerModel(e.message, "failed");
+        actionPanelClose();
+        editUserName.click();
+    });
 });
 
 // request panel 
@@ -145,12 +185,29 @@ function actionPanelClose(){
     },200);
 }
 
+// flyer handler
+function flyerModel(message, status){
+    const flyerBody = document.querySelector(".flyerBody");
+    document.querySelector(".flyerMessage").innerHTML = message;
+
+    flyerBody.classList.add(status);
+    flyerBody.classList.add("open");
+    setTimeout(()=>{
+        flyerBody.classList.remove("open");
+        setTimeout(()=>{
+            flyerBody.classList.remove(status);
+            document.querySelector(".flyerMessage").innerHTML = "";
+        },200);
+    },3000);
+}
+
+
 //updates the user front end 
 function updateDisplayUserName(){
-    var user = firebase.auth().currentUser;
+    let user = firebase.auth().currentUser;
     
     if(user){
-        var displayName = user.displayName;
+        let displayName = user.displayName;
         document.querySelector(".userNameMenuDisplay").innerHTML = displayName;
         document.querySelector(".userName").value = displayName;
     }
@@ -164,14 +221,24 @@ function signInUser(){
         //opens the edit the name panel
         editUserName.click();
 
-        var user = firebase.auth().currentUser;
-
+        // PATCH: as the new user signed in cant see the game name
+        let user = firebase.auth().currentUser;
         user.updateProfile({
             displayName: 'Mr Robot'
         }).then(()=>{
             updateDisplayUserName();
         });
     });
+}
+
+// when the user is logged, show the view
+function loadTheViewForUser(){
+    document.querySelectorAll(".pageLoading").forEach((element)=>{
+        element.classList.remove("pageLoading");
+    });
+
+    // TODO: request for the online player and update the userlastseen
+    // TODO: create a listener for a challenge
 }
 
 // signing in users and creating a profile
@@ -181,9 +248,8 @@ firebase.auth().onAuthStateChanged((user)=>{
 
     if(user){
         actionPanelClose();
-        // TODO: show proper view 
-        // TODO: set user name 
         updateDisplayUserName();
+        loadTheViewForUser();
     }else{
         signInUser();
     }

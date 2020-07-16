@@ -237,8 +237,8 @@ header nav span.menuBtn:hover{
 
 .mainBody .cardBackground .playSectionHeading{
     text-align: center;
-    font-size: 30px;
-    font-weight: 500;
+    font-size: 28px;
+    font-weight: 400;
 }
 
 .playWithBot .robotImage{
@@ -293,6 +293,11 @@ header nav span.menuBtn:hover{
 
 .onlinePlayerDisplay table tr td button:hover{
     background-color: orange;
+}
+
+.onlinePlayerDisplay .loadingPlayers{
+    text-align: center;
+    padding: 20px 0px;
 }
 
 /* notification related */
@@ -444,18 +449,26 @@ header nav span.menuBtn:hover{
     margin: -100% 35%;
     width: 30%;
     border-radius: 0px 0px 10px 10px;
-    padding: 40px 20px 20px 20px;
+    padding: 20px 20px 10px 20px;
     text-align: center;
     font-size: 20px;
     box-shadow: 0px 0px 6px black;
+    z-index: 2;
+    transition: margin 200ms;
+    font-size: 15px;
 }
 
 .flyerBody.open{
     margin: 0px 35%;
 }
 
-.flyerBody.open.success{
+.flyerBody.success{
     background-color: rgb(0, 172, 0);
+    color: white;
+}
+
+.flyerBody.failed{
+    background-color: red;
     color: white;
 }
 

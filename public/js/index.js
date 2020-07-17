@@ -16,6 +16,8 @@ const actionModel = document.querySelector(".actionModel");
 const actionModelHeader = document.querySelector(".actionModelHeader");
 const actionModelBody = document.querySelector(".actionModelBody");
 
+var onlinePlayerRequestMaker;
+
 //check screen width is with-in acceptable range
 /* code has been moved to function fetchTheTheme() */
 
@@ -134,7 +136,7 @@ changeUserNameForm.addEventListener("submit",(e)=>{
         user.updateProfile({
             displayName: userName
         }).then(()=>{
-            flyerModel("Successfully Updated Your Name", "success");
+            flyerModel("Successfully Updated Your Name.", "success");
             actionPanelClose();
             updateDisplayUserName();
         });
@@ -213,6 +215,43 @@ function updateDisplayUserName(){
     }
 }
 
+// challange the other player when the user press the challange 
+function challengeThePlayer(userUID){
+    // TODO: challange the player
+}
+
+// fetch the online players by calling the firebase-functions
+function fetchOnlinePlayers(){
+
+    const callableFunctionOnlinePlayers = firebase.functions().httpsCallable('fetchOnlinePlayers');
+
+    callableFunctionOnlinePlayers()
+    .then((players)=>{
+
+        const onlinePlayerDisplay = document.querySelector(".onlinePlayerDisplay");
+
+        if(players.data.length == 0){
+            onlinePlayerDisplay.innerHTML = '<div class="loadingPlayers">There Are No Players Online.</div>'
+        }else{
+            let playerListTable = '<table><tr class="tableHeader"><th>Player Name [ Online ]</th><th> Send The Request </th></tr><tbody>';
+            players.data.forEach((player)=>{
+                playerListTable += '<tr><td>'
+                + player.playerName 
+                + '</td><td><button onclick="challengeThePlayer(\''
+                // PATCH: The user ID is been exposed openly
+                + player.userUID 
+                +'\')"><svg width="1.1em" height="1.1em" viewBox="0 0 16 16" class="bi bi-lightning-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z"/></svg>Challenge</button></td></tr>'
+            });
+            playerListTable += '</tbody></table>';
+            onlinePlayerDisplay.innerHTML = playerListTable;
+        }
+        onlinePlayerRequestMaker = setTimeout(fetchOnlinePlayers, 30000);
+    }).catch((e)=>{
+        flyerModel(e.message, "failed");
+        clearInterval(onlinePlayerRequestMaker);
+    });
+}
+
 // signing in new user
 function signInUser(){
 
@@ -237,7 +276,7 @@ function loadTheViewForUser(){
         element.classList.remove("pageLoading");
     });
 
-    // TODO: request for the online player and update the userlastseen
+    fetchOnlinePlayers();
     // TODO: create a listener for a challenge
 }
 
@@ -253,5 +292,4 @@ firebase.auth().onAuthStateChanged((user)=>{
     }else{
         signInUser();
     }
-
 });

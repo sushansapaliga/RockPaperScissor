@@ -65,3 +65,45 @@ exports.requestForNameChange = functions.https.onCall( async (data, context)=>{
     });
 
 });
+
+exports.fetchOnlinePlayers = functions.https.onCall(async (data, context)=>{
+
+    if(!context.auth){
+        throw new functions.https.HttpsError(
+            'unauthenticated',
+            'Only Authenticated User Can Make Request'
+        );
+    }
+
+    const uid = context.auth.uid;
+    let time = Date.now();
+
+    await admin.firestore().collection('userDetails')
+    .doc(uid).update({
+        userLastSeen: time
+    });
+
+    return new Promise((resolve,reject)=>{
+        admin.firestore().collection('userDetails')
+        .where('userLastSeen','>=',(time-30000))
+        .orderBy("userLastSeen","asc")
+        .limit(20)
+        .get()
+        .then((snapShot)=>{
+            let data = [];
+
+            snapShot.forEach((doc)=>{
+                if(doc.id != uid){
+                    data.push({
+                        userUID: doc.id,
+                        playerName: doc.data()["playerName"]
+                    });
+                }
+            });
+
+            resolve(data);
+        }).catch((e)=>{
+            reject(e);
+        });
+    });
+});

@@ -107,3 +107,73 @@ exports.fetchOnlinePlayers = functions.https.onCall(async (data, context)=>{
         });
     });
 });
+
+exports.invitePlayerToGame = functions.https.onCall(async (data, context)=>{
+
+    if(!context.auth){
+        throw new functions.https.HttpsError(
+            'unauthenticated',
+            'Only Authenticated User Can Make Request'
+        );
+    }
+
+    const hostUID = context.auth.uid;
+    const receiverUID = data.userUID;
+
+    if(!(typeof receiverUID === 'string')){
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Input To The Function Must Be String. Request Failed.'
+        );
+    }
+
+    let constructDoc = {
+        gameStatus: 'waiting',
+        players: {
+            host: {
+                name: '',
+                uid: hostUID
+            },
+            receiver: {
+                name: '',
+                uid: receiverUID
+            }
+        },
+        requestGameTime: 1
+    }
+
+    // related to receiver
+    const receiverDetails = await admin.firestore().collection('userDetails').doc(receiverUID).get();
+
+    if(!receiverDetails.exists){
+        throw new functions.https.HttpsError(
+            'aborted',
+            'Invalid Player UID. Request Failed.'
+        );
+    }
+        
+    constructDoc.players.receiver.name = receiverDetails.data().playerName;
+
+    //related to host
+    const hostDetails = await admin.firestore().collection('userDetails').doc(hostUID).get();
+
+    if(!hostDetails.exists){
+        throw new functions.https.HttpsError(
+            'aborted',
+            'Invalid Player UID. Request Failed.'
+        );
+    }
+    
+    constructDoc.players.host.name = hostDetails.data().playerName;
+
+    // time
+    constructDoc.requestGameTime = Date.now();
+
+    // add doc
+    let doc = await admin.firestore().collection('requestDetails').add(constructDoc);
+
+    return new Promise((resolve, reject)=>{
+        resolve(doc.id);
+    });
+
+});

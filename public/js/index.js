@@ -17,6 +17,10 @@ const actionModelHeader = document.querySelector(".actionModelHeader");
 const actionModelBody = document.querySelector(".actionModelBody");
 
 var onlinePlayerRequestMaker;
+var listenerForChallenges;
+var challangeRequestMaker;
+
+const db = firebase.firestore();
 
 //check screen width is with-in acceptable range
 /* code has been moved to function fetchTheTheme() */
@@ -108,7 +112,7 @@ changeUserNameBackground.addEventListener("click", (e)=>{
 changeUserNameForm.addEventListener("submit",(e)=>{
     e.preventDefault();
 
-    const userName = changeUserNameForm.userGameName.value;
+    const userName = changeUserNameForm.userGameName.value.trim();
 
     if(userName.length == 0){
         flyerModel("Cannot Set Your Game Name As Empty. Update Failed.", "failed");
@@ -203,7 +207,6 @@ function flyerModel(message, status){
     },3000);
 }
 
-
 //updates the user front end 
 function updateDisplayUserName(){
     let user = firebase.auth().currentUser;
@@ -217,7 +220,48 @@ function updateDisplayUserName(){
 
 // challange the other player when the user press the challange 
 function challengeThePlayer(userUID){
-    // TODO: challange the player
+
+    clearInterval(onlinePlayerRequestMaker);
+    listenerForChallenges();
+    clearInterval(challangeRequestMaker);
+
+    actionPanelOpen("Sending","Sending Request To The Player...");
+
+    const invitePlayerToGameFunction = firebase.functions().httpsCallable("invitePlayerToGame");
+    invitePlayerToGameFunction({
+        userUID: userUID
+    }).then((doc)=>{
+
+        const docID = doc.data;
+        actionPanelOpen("Waiting","Waiting For Player To Accept The Challenge...");
+
+        let waitingRequest = db.collection('requestDetails').doc(docID)
+        .onSnapshot((doc)=>{
+            if( doc.data().gameStatus == "accepted"){
+                // TODO : redirect the player to multiplayer game page
+            }
+        });
+
+        setTimeout(()=>{
+            waitingRequest();
+            actionPanelClose();
+
+            // restart the normal process
+            fetchOnlinePlayers();
+            lookForChallanges();
+        }, 30000);
+    }).catch((e)=>{
+        console.log(e.message);
+        flyerModel(e.message, "failed");
+        fetchOnlinePlayers();
+        lookForChallanges();
+    });
+}
+
+// accept the challenge request
+function acceptChallangeRequest(docID){
+    // TODO: accept the request
+    console.log(docID);
 }
 
 // fetch the online players by calling the firebase-functions
@@ -238,7 +282,7 @@ function fetchOnlinePlayers(){
                 playerListTable += '<tr><td>'
                 + player.playerName 
                 + '</td><td><button onclick="challengeThePlayer(\''
-                // PATCH: The user ID is been exposed openly
+                // PATCH: The user ID is been exposed openly - possible solution Vue JS [working on it]
                 + player.userUID 
                 +'\')"><svg width="1.1em" height="1.1em" viewBox="0 0 16 16" class="bi bi-lightning-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M11.251.068a.5.5 0 0 1 .227.58L9.677 6.5H13a.5.5 0 0 1 .364.843l-8 8.5a.5.5 0 0 1-.842-.49L6.323 9.5H3a.5.5 0 0 1-.364-.843l8-8.5a.5.5 0 0 1 .615-.09z"/></svg>Challenge</button></td></tr>'
             });
@@ -250,6 +294,59 @@ function fetchOnlinePlayers(){
         flyerModel(e.message, "failed");
         clearInterval(onlinePlayerRequestMaker);
     });
+}
+
+// a listener function 
+function lookForChallanges(){
+    let time = Date.now();
+    let user = firebase.auth().currentUser;
+
+    listenerForChallenges = db.collection("requestDetails")
+    .where("requestGameTime",">=",(time-30000))
+    .where("gameStatus", "==", "waiting")
+    .where("players.receiver.uid", "==", user.uid)
+    .limit(20)
+    .onSnapshot((snapShot)=>{
+
+        let count = 0;
+        let tableList = '<table><tr><th>Player Name</th><th>Challenge Request</th></tr>';
+
+        snapShot.forEach((doc)=>{
+
+            count++;
+            tableList += '<tr><td>' 
+            + doc.data().players.host.name
+            +'</td><td><button onclick="acceptChallangeRequest(\''
+            + doc.id
+            + '\')"><svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-plus" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z"/><path fill-rule="evenodd" d="M7.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0V8z"/></svg>Accept</button></td></tr>';
+        });
+
+        tableList += "</table>";
+
+        document.querySelector(".notifier .messageNotification span").innerHTML = count;
+
+        if(count == 0){
+
+            document.querySelector(".noDataToShow").classList.add("show");
+            document.querySelector(".showPlayerWhoChallenged").classList.remove("show");
+            document.querySelector(".showPlayerWhoChallenged").innerHTML = tableList;
+        }else{
+
+            document.querySelector(".noDataToShow").classList.remove("show");
+            document.querySelector(".showPlayerWhoChallenged").classList.add("show");
+            document.querySelector(".showPlayerWhoChallenged").innerHTML = tableList;
+            flyerModel("Someone Has Challenged You!", "warning")
+        }
+
+    },(e)=>{
+        flyerModel(e.message, "failed");
+        listenerForChallenges();
+    });
+
+    challangeRequestMaker = setTimeout(()=>{
+        listenerForChallenges();
+        lookForChallanges();
+    }, 30000);
 }
 
 // signing in new user
@@ -277,7 +374,7 @@ function loadTheViewForUser(){
     });
 
     fetchOnlinePlayers();
-    // TODO: create a listener for a challenge
+    lookForChallanges();
 }
 
 // signing in users and creating a profile

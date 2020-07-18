@@ -472,6 +472,12 @@ header nav span.menuBtn:hover{
     color: white;
 }
 
+.flyerBody.warning{
+    background-color: orange;
+    color: white;
+}
+
+/* to avoid the improper display of data */
 .pageLoading{
     display: none;
 }

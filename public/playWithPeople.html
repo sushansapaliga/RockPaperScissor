@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Rock, Paper and Scissor - Challenge</title>
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+        <!-- custom css -->
+        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="css/toggleSwitch.css">
+        <link rel="stylesheet" href="css/loader.css">
+
+    </head>
+
+    <body class="dark" onload="fetchTheTheme()">
+
+        <!-- navbar -->
+        <header>
+            <nav>
+                <span class="RockPaperScissor">
+                    Rock, Paper and Scissor
+                    <span>
+                    <small style="font-size: 14px;color: orange;">BETA</small>
+                    </span>
+                </span>
+                <span class="menuBtn">
+                    <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-three-dots-vertical" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                    </svg>
+                </span>
+            </nav>
+        </header>
+
+        <!-- Menu drawer -->
+        <div class="menuBackground">
+            <div class="menuContent">
+                <div class="menuHeading">
+                    <span>
+                        Menu
+                    </span>
+                    <span class="menuBtn">
+                        <svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-x" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M11.854 4.146a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708-.708l7-7a.5.5 0 0 1 .708 0z"/>
+                            <path fill-rule="evenodd" d="M4.146 4.146a.5.5 0 0 0 0 .708l7 7a.5.5 0 0 0 .708-.708l-7-7a.5.5 0 0 0-.708 0z"/>
+                        </svg>
+                    </span>
+                </div>
+                <hr>
+                <div class="menuBody">
+                    <div class="menuUserRelated">
+                        <span class="userNameMenuDisplay">
+                            {{ Guest Name }}
+                        </span>
+                    </div>
+                </div>
+                <hr>
+                <div class="userSetting">
+                    <div class="settingHeading">
+                        Settings
+                    </div>
+                    <hr>
+                    <div class="darkMode">
+                        <label class="switch">
+                            <input class="darkModeCheckBox" type="checkbox">
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="darkModeText">
+                            Dark Mode
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action model -->
+        <div class="actionModelBackgound">
+            <div class="actionModel">
+                <div class="actionModelHeader">
+                    Loading
+                </div>
+                <hr>
+                <div class="actionModelBody">
+                    Setting Up Things For You...
+                </div>
+                <div>
+                    <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+                </div>
+            </div>
+        </div>
+  
+        <!-- flyer -->
+        <div class="flyerBody">
+            <div class="flyerMessage">
+                {{ Successfully Updated. }}
+            </div>
+        </div>
+
+    </body>
+
+    <!-- custom script -->
+    <script src="js/playWithPeople.js"></script>
+</html>

@@ -1,5 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const { HttpsError } = require('firebase-functions/lib/providers/https');
 admin.initializeApp();
 
 exports.newUserIsSignedUp = functions.auth.user().onCreate( async (user)=>{
@@ -174,6 +175,80 @@ exports.invitePlayerToGame = functions.https.onCall(async (data, context)=>{
 
     return new Promise((resolve, reject)=>{
         resolve(doc.id);
+    });
+
+});
+
+exports.acceptTheChallenge = functions.https.onCall(async (data, context)=>{
+
+    if(!context.auth){
+        throw new functions.https.HttpsError(
+            'unauthenticated',
+            'Only Authenticated User Can Make Request'
+        );
+    }
+
+    const docID = data.docID;
+    const receiverUID = context.auth.uid;
+
+    let constructDoc = {
+        status: 'open',
+        players : {
+            host: {
+                playerName: '',
+                uid: '',
+            },
+            receiver:{
+                playerName: '',
+                uid: receiverUID
+            }
+        },
+        joinedPlayers: [],
+        gameInitializedTime: 1,
+        nextPlay: 'host',
+        lastMoveTime: 1,
+        moves: {
+            1: {
+                host: 'not-played',
+                receiver: 'not-played'
+            },
+            2: {
+                host: 'not-played',
+                receiver: 'not-played'
+            },
+            3: {
+                host: 'not-played',
+                receiver: 'not-played'
+            }
+        }
+    }
+
+    const doc = await admin.firestore().collection('requestDetails').doc(docID).get();
+    let time = Date.now();
+
+    if(!doc.exists){
+        throw new functions.https.HttpsError(
+            'aborted',
+            'Invalid Input. Challenge Denied.'
+        );
+    }
+
+    if( doc.data().requestGameTime + 25000 < time){
+        throw new functions.https.HttpsError(
+            'deadline-exceeded',
+            'The Challenge Has Expired. Challenge Denied.'
+        );
+    }
+
+    constructDoc.players = doc.data().players;
+    constructDoc.gameInitializedTime = time;
+    constructDoc.lastMoveTime = time;
+
+    await admin.firestore().collection('gameDetails').add(constructDoc);
+
+    return admin.firestore().collection('requestDetails').doc(docID)
+    .update({
+        gameStatus: 'accepted'
     });
 
 });

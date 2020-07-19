@@ -218,7 +218,7 @@ function updateDisplayUserName(){
     }
 }
 
-// challange the other player when the user press the challange 
+// challenge the other player when the user press the challenge 
 function challengeThePlayer(userUID){
 
     clearInterval(onlinePlayerRequestMaker);
@@ -239,29 +239,52 @@ function challengeThePlayer(userUID){
         .onSnapshot((doc)=>{
             if( doc.data().gameStatus == "accepted"){
                 // TODO : redirect the player to multiplayer game page
+                window.location.replace("playWithPeople.html");
             }
         });
 
+        // if the request is not accepted, restart the normal process
         setTimeout(()=>{
             waitingRequest();
             actionPanelClose();
 
             // restart the normal process
             fetchOnlinePlayers();
-            lookForChallanges();
+            lookForChallenges();
         }, 30000);
     }).catch((e)=>{
-        console.log(e.message);
         flyerModel(e.message, "failed");
         fetchOnlinePlayers();
-        lookForChallanges();
+        lookForChallenges();
     });
 }
 
 // accept the challenge request
 function acceptChallangeRequest(docID){
     // TODO: accept the request
-    console.log(docID);
+
+    requestPanelBackground.click();
+
+    clearInterval(onlinePlayerRequestMaker);
+    listenerForChallenges();
+    clearInterval(challangeRequestMaker);
+
+    actionPanelOpen("Accepting","Accepting The Challenge...");
+    
+    const acceptTheChallenge = firebase.functions().httpsCallable("acceptTheChallenge");
+    acceptTheChallenge({
+        docID: docID
+    }).then(()=>{
+        window.location.replace("playWithPeople.html");
+    }).catch((e)=>{
+
+        console.log(e);
+        console.log(e.message);
+
+        flyerModel(e.message, "failed");
+        fetchOnlinePlayers();
+        lookForChallenges();
+    });
 }
 
 // fetch the online players by calling the firebase-functions
@@ -291,13 +314,16 @@ function fetchOnlinePlayers(){
         }
         onlinePlayerRequestMaker = setTimeout(fetchOnlinePlayers, 30000);
     }).catch((e)=>{
+
+        console.log(e.message);
+
         flyerModel(e.message, "failed");
         clearInterval(onlinePlayerRequestMaker);
     });
 }
 
 // a listener function 
-function lookForChallanges(){
+function lookForChallenges(){
     let time = Date.now();
     let user = firebase.auth().currentUser;
 
@@ -345,7 +371,7 @@ function lookForChallanges(){
 
     challangeRequestMaker = setTimeout(()=>{
         listenerForChallenges();
-        lookForChallanges();
+        lookForChallenges();
     }, 30000);
 }
 
@@ -374,7 +400,7 @@ function loadTheViewForUser(){
     });
 
     fetchOnlinePlayers();
-    lookForChallanges();
+    lookForChallenges();
 }
 
 // signing in users and creating a profile

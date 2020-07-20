@@ -1,0 +1,38 @@
+.robotImg{
+    height: 300px;
+    display: none;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 30px;
+
+}
+
+.showImage{
+    display: block;
+}
+
+.robotSection .descriptionFromRobot{
+    text-align: center;
+    padding: 8px;
+    border: 1px orange solid;
+    border-radius: 4px;
+}
+
+.scoreBoard{
+    display: flex;
+    align-items: stretch;
+}
+
+.scoreBoard .scoreNumber{
+    background-color: orange;
+    width: 100%;
+    margin: 5px;
+    padding: 30px;
+    border-radius: 10px;
+}
+
+.scoreBoard .scoreNumber div{
+    text-align: center;
+    font-size: 24px;
+    font-weight: 300;
+}

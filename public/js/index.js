@@ -58,7 +58,7 @@ function fetchTheTheme(){
 
     const mode = localStorage.getItem("rockpaperscissor-sushan");
 
-    if(screen.width < 900){
+    if(screen.width < 1000){
         bodyHTML.innerHTML = 'Cannot display the contents because of smaller screen size. Switch to desktop view for better experience.';
     }
 

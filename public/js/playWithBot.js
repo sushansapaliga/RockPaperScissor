@@ -116,3 +116,22 @@ function updateDisplayUserName(){
         document.querySelector(".userNameMenuDisplay").innerHTML = user.displayName;
     }
 }
+
+
+// check if user is authenticated - if not redirect the user to home page
+firebase.auth().onAuthStateChanged((user)=>{
+
+    fetchTheTheme();
+
+    if(user){
+
+        document.querySelectorAll(".pageLoading").forEach((element)=>{
+            element.classList.remove("pageLoading");
+        });
+
+        actionPanelClose();
+        updateDisplayUserName();
+    }else{
+        window.location.replace("index.html");
+    }
+})

@@ -238,7 +238,6 @@ function challengeThePlayer(userUID){
         let waitingRequest = db.collection('requestDetails').doc(docID)
         .onSnapshot((doc)=>{
             if( doc.data().gameStatus == "accepted"){
-                // TODO : redirect the player to multiplayer game page
                 window.location.replace("playWithPeople.html");
             }
         });
@@ -261,7 +260,6 @@ function challengeThePlayer(userUID){
 
 // accept the challenge request
 function acceptChallangeRequest(docID){
-    // TODO: accept the request
 
     requestPanelBackground.click();
 

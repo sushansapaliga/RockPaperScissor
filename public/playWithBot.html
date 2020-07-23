@@ -16,7 +16,7 @@
 
     </head>
 
-    <body class="dark" onload="fetchTheTheme()">
+    <body class="dark">
 
         <!-- navbar -->
         <header>
@@ -77,7 +77,7 @@
         </div>
 
         <!-- main body -->
-        <div class="mainBody">
+        <div class="mainBody pageLoading">
             <div class="row">
                 <div class="col-4">
                     <div class="robotSection cardBackground">
@@ -164,8 +164,9 @@
                         <div class="selectedMove">
                             Choose Your Move...
                         </div>
-                        <div class="moveCollections">
-                            <button id="rock" class="selected">
+                        <hr>
+                        <div class="moveCollections userOptions">
+                            <button id="rock">
                                 Rock
                             </button>
                             <button id="paper">
@@ -181,8 +182,8 @@
         </div>
 
         <!-- Action model -->
-        <div class="actionModelBackgound">
-            <div class="actionModel">
+        <div class="actionModelBackgound open">
+            <div class="actionModel active">
                 <div class="actionModelHeader">
                     Loading
                 </div>
@@ -204,6 +205,16 @@
         </div>
 
     </body>
+
+    <!-- The lastest version of firebase is not used because to remove possible errors: firebase is not defined -->
+    <script src="/__/firebase/7.15.0/firebase-app.js"></script>
+    <script src="/__/firebase/7.15.0/firebase-auth.js"></script>
+    <script src="/__/firebase/7.15.0/firebase-firestore.js"></script>
+    <script src="/__/firebase/7.15.0/firebase-functions.js"></script>
+    <script src="/__/firebase/7.15.0/firebase-analytics.js"></script>
+
+    <!-- initialize the firebase -->
+    <script src="/__/firebase/init.js"></script>
 
     <!-- custom script -->
     <script src="js/playWithBot.js"></script>

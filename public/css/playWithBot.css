@@ -81,6 +81,10 @@
     display: flex;
 }
 
+.playerSection .moveCollections.optionsDisabled{
+    background-color: rgba(0, 0, 0, 0.644);
+}
+
 .playerSection .moveCollections button{
     padding: 5px;
     outline: none;
@@ -92,12 +96,7 @@
     font-size: 20px;
 }
 
-.playerSection .moveCollections button:hover{
-    background-color: rgb(255, 188, 64);
-    transform: scale(1.1);
-}
-
-.playerSection .moveCollections button.selected{
+.playerSection .moveCollections.userOptions button:hover{
     background-color: rgb(255, 188, 64);
     transform: scale(1.1);
 }

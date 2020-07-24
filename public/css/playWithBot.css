@@ -79,6 +79,7 @@
     border-radius: 10px;
     text-align: center;
     display: flex;
+    transition: 200ms;
 }
 
 .playerSection .moveCollections.optionsDisabled{
@@ -103,5 +104,8 @@
 
 .optionDisabled{
     filter: brightness(30%);
-    position: none;
+}
+
+.optionDisabled button{
+    cursor: default;
 }

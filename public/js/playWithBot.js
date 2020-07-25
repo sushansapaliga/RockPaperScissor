@@ -13,7 +13,14 @@ const actionModelBody = document.querySelector(".actionModelBody");
 const rockBtn = document.querySelector("#rock");
 const paperBtn = document.querySelector("#paper");
 const scissorBtn = document.querySelector("#scissor");
-const moveCollections = document.querySelector(".moveCollections");
+const playerMoveSection = document.querySelector(".playerMoveSection");
+const lastRoundState = document.querySelector(".lastRoundState");
+
+var playerScore = 0;
+var robotScore = 0;
+
+var timeline = []; 
+var gameCount = 0;
 
 
 // menu drawer
@@ -125,6 +132,51 @@ function checkTheWinner(player1, player2) {
     }
 }
 
+function updateTimeline(robotMove, userMove){
+
+    gameCount ++;
+
+    let currentGameStr = '<tr><td>'+ gameCount +'.</td>';
+
+    switch (checkTheWinner(robotMove, userMove)) {
+        case 'draw':
+            currentGameStr += '<td><img src="images/'+ userMove +'.png" alt="'+ userMove +'"></td>';
+            currentGameStr += '<td>-</td>';
+            currentGameStr += '<td><img src="images/'+ robotMove +'.png" alt="'+ robotMove +'"></td>';
+            break;
+        case '1':
+            currentGameStr += '<td><img src="images/'+ userMove +'.png" alt="'+ userMove +'"></td>';
+            currentGameStr += '<td>-</td>';
+            currentGameStr += '<td><img class="highlight" src="images/'+ robotMove +'.png" alt="'+ robotMove +'"></td>';
+            break;
+        case '2':
+            currentGameStr += '<td><img class="highlight" src="images/'+ userMove +'.png" alt="'+ userMove +'"></td>';
+            currentGameStr += '<td>-</td>';
+            currentGameStr += '<td><img src="images/'+ robotMove +'.png" alt="'+ robotMove +'"></td>';
+            break;
+    }
+
+    currentGameStr += "</tr>";
+
+    if(timeline.length > 2){
+        timeline.reverse().pop();
+        timeline = timeline.reverse();
+    }
+
+    timeline.push(currentGameStr);
+
+    let tableTimeLine = '<table>';
+
+    for(let i =timeline.length-1 ; i>=0; i--){
+        tableTimeLine += timeline[i];
+    }
+
+    tableTimeLine += '</table>';
+
+    document.querySelector(".timelineDetails").innerHTML = tableTimeLine;
+
+}
+
 // find the move from the robot
 function moveFromRobot(){
 
@@ -143,49 +195,44 @@ function moveFromRobot(){
 // fires when user selects an option
 function userChooseMove(userMove){
 
-    moveCollections.classList.add("optionDisabled");
-    moveCollections.classList.remove("userOptions");
+    playerMoveSection.classList.add("optionDisabled");
+    playerMoveSection.classList.remove("userOptions");
 
     // event removal - disabling the button 
     rockBtn.removeEventListener("click",functionForRock);
     paperBtn.removeEventListener("click",functionForPaper);
     scissorBtn.removeEventListener("click",functionForScissor);
 
-    const selectedMove = document.querySelector(".selectedMove");
-    const descriptionFromRobot = document.querySelector(".descriptionFromRobot");
-
-    selectedMove.innerHTML = userMove;
-    descriptionFromRobot.innerHTML = "Robot Is Thinking...";
+    document.querySelector(".playerContainer").innerHTML = '<img src="images/'+ userMove +'.png" alt="'+ userMove +'" title="'+ userMove +'">';
+    document.querySelector(".robotContainer").innerHTML = "Opponent Is Thinking...";
 
     const robotMove = moveFromRobot();
 
-    console.log(robotMove);
-
     setTimeout(()=>{
+
+        document.querySelector(".robotContainer").innerHTML = '<img src="images/'+ robotMove +'.png" alt="'+ robotMove +'" title="'+ robotMove +'">';
         
         switch (checkTheWinner(robotMove, userMove)) {
             case 'draw':
-                flyerModel('It Was A Draw.', 'warning');
+                lastRoundState.innerHTML = "It Was A Draw.";
                 break;
             case '1':
-                flyerModel('Robot Won The Round.','failed');
+                lastRoundState.innerHTML = "Robot Won The Round.";
+                robotScore ++;
                 break;
             case '2':
-                flyerModel('You Won The Round.', 'success');
+                lastRoundState.innerHTML = "You Won The Round.";
+                playerScore ++;
                 break;
         }
-        // TODO: update score 
+
         // TODO: update the timeline
-        // TODO: update the pics of the robot
+        updateTimeline(robotMove, userMove);
+        // TODO: update the state of the robot
 
-        // to avoid clash with flyer model
-        setTimeout(()=>{
-            selectedMove.innerHTML = "Choose Your Move...";
-            descriptionFromRobot.innerHTML = "Waiting For User Action...";
-            startListeningToUserEvents();
-        },1500);
+        startListeningToUserEvents();
 
-    },1000);
+    },1500);
 }
 
 
@@ -205,8 +252,12 @@ function functionForScissor(){
 //add eventlistener to buttons
 function startListeningToUserEvents(){
 
-    moveCollections.classList.remove("optionDisabled");
-    moveCollections.classList.add("userOptions");
+    playerMoveSection.classList.remove("optionDisabled");
+    playerMoveSection.classList.add("userOptions");
+
+    // set the scores of the score board
+    document.querySelector(".playerScore").innerHTML = playerScore;
+    document.querySelector(".robotScore").innerHTML = robotScore;
 
     //event binder
     rockBtn.addEventListener("click",functionForRock);
@@ -241,4 +292,4 @@ firebase.auth().onAuthStateChanged((user)=>{
     }else{
         window.location.replace("index.html");
     }
-})
+});

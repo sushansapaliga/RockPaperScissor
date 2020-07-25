@@ -1,111 +1,132 @@
-/* images sections */
-.robotImg{
-    height: 300px;
-    display: none;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 30px;
-
+.dark{
+    --playWithBot-color-1: white;
+    --playWithBot-color-2: rgba(255, 180, 41, 0.904);
+    --playWithBot-color-3: rgb(153, 153, 153);
+    --playWithBot-val-1: 1;
 }
 
-.showImage{
-    display: block;
+.light{
+    --playWithBot-color-1: grey;
+    --playWithBot-color-2: rgb(255, 187, 61);
+    --playWithBot-color-3: rgb(204, 204, 204);
+    --playWithBot-val-1: 0;
 }
 
-.robotSection .descriptionFromRobot{
+/* main window */
+
+.mainBody .row .col-4 .heading{
     text-align: center;
-    padding: 8px;
-    border: 1px orange solid;
-    border-radius: 4px;
+    font-size: 23px;
+    font-weight: 500;
 }
 
-
-/* score board section */
-.scoreBoard{
+.mainBody .row .col-4 .selectedContainer{
+    border: 2px solid var(--playWithBot-color-1);
+    border-radius: 10px;
+    margin: 25px auto;
+    padding: 25px;
+    width: 250px;
+    height: 250px;
     display: flex;
-    align-items: stretch;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
-.scoreBoard .scoreNumber{
-    background-color: orange;
-    width: 100%;
-    margin: 5px;
-    padding: 30px;
-    border-radius: 10px;
+.player .selectedContainer img, .bot .selectedContainer img{
+    height: 200px;
+    width: 200px;
+    filter: invert(var(--playWithBot-val-1));
 }
 
-.scoreBoard .scoreNumber div{
-    text-align: center;
-    font-size: 24px;
-    font-weight: 300;
+.bot .selectedContainer img{
+    transform: scaleX(-1);
 }
 
-.timelineGamePlay .heading{
-    text-align: center;
-    font-size: 20px;
-}
-
-.timelineGamePlay table{
-    width: 100%;
-    text-align: center;
-}
-
-.timelineGamePlay table tr{
-    padding: 10px;
-}
-
-.timelineGamePlay table td{
-    padding: 5px;
-}
-
-.timelineGamePlay table td.highlight{
-    background-color: rgba(255, 166, 0, 0.61);
-    border-radius: 4px;
-}
-
-/* player sections */
-.playerSection .selectedMove{
-    text-align: center;
-    padding: 80px 0px;
-    font-size: 25px;
-    border: 1px orange solid;
-    border-radius: 10px;
-}
-
-.playerSection .moveCollections{
-    margin: 20px 15px;
-    background-color: rgb(189, 189, 189);
-    padding: 30px 10px;
-    border-radius: 10px;
-    text-align: center;
+.mainBody .movesContainer{
     display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: var(--playWithBot-color-2);
+    border-radius: 10px;
+    margin: 0px 10px;
+    height: 90px;
+    font-weight: 500;
     transition: 200ms;
 }
 
-.playerSection .moveCollections.optionsDisabled{
-    background-color: rgba(0, 0, 0, 0.644);
+.mainBody .stateDescription{
+    text-align: center; 
+    font-size: 18px;
 }
 
-.playerSection .moveCollections button{
-    padding: 5px;
-    outline: none;
-    border: none;
-    width: 100%;
-    background-color: transparent;
-    border-radius: 5px;
-    transition: 300ms;
-    font-size: 20px;
+.mainBody .movesContainer img{
+    height: 80px;
+    width: 80px;
+    transform: rotate(-90deg);
+    filter: invert(var(--playWithBot-val-1));
+    transition: 200ms;
 }
 
-.playerSection .moveCollections.userOptions button:hover{
-    background-color: rgb(255, 188, 64);
-    transform: scale(1.1);
-}
-
-.optionDisabled{
+.mainBody .movesContainer.optionDisabled{
     filter: brightness(30%);
 }
 
-.optionDisabled button{
-    cursor: default;
+.mainBody .movesContainer.userOptions img:hover{
+    transform: scale(1.4);
+    cursor: pointer;
+}
+
+.score .lastRoundState{
+    padding: 20px;
+    text-align: center;
+    margin-top: 25px;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 18px;
+    background-color: var(--playWithBot-color-2);
+}
+
+.score .scoreBoard{
+    display: flex;
+}
+
+.score .scoreBoard div{
+    width: 100%;
+    margin: 10px;
+    padding: 30px;
+    text-align: center;
+    background-color: var(--playWithBot-color-3);
+    color: black;
+    font-size: 25px;
+    font-weight: 600;
+    border-radius: 10px;
+    border: 2px solid grey;
+}
+
+.timeline .timelineHeading{
+    text-align: center;
+    font-size: 18px;
+}
+
+.timeline .timelineDetails table, .timeline .timelineDetails table tr{
+    width: 100%;
+}
+
+.timeline .timelineDetails table tr td:nth-of-type(even){
+    text-align: center;
+}
+
+.timeline .timelineDetails table img{
+    height: 40px;
+    width: 40px;
+    filter: invert(var(--playWithBot-val-1));
+}
+
+.timeline .timelineDetails table tr td:last-child img{
+    transform: scaleX(-1);
+}
+
+.timeline .timelineDetails .highlight{
+    filter: contrast(10000%) invert(200%) sepia(2000%) saturate(20000%) hue-rotate(320deg);
 }

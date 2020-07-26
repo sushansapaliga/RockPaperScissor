@@ -109,11 +109,92 @@ function flyerModel(message, status){
 }
 
 //updates the user front end 
-//updates the user front end 
 function updateDisplayUserName(){
     let user = firebase.auth().currentUser;
     
     if(user){ 
         document.querySelector(".userNameMenuDisplay").innerHTML = user.displayName;
     }
+}
+
+// experment - ignore 
+
+var listn ;
+var count = 0;
+var role = 'host';
+var isPlayAble = true;
+
+const database = firebase.database();
+const gameDetails = database.ref('gameDetails/testingBranch');
+
+function startTheListener(){
+
+    listn = gameDetails.on('value', (snapShot)=>{
+
+        let val = snapShot.val();
+        console.log(val);
+
+        let user = firebase.auth().currentUser;
+
+        // get the role
+        if(val.players.host.uid == user.uid){
+            role = 'host';
+        }else if(val.players.receiver.uid == user.uid){
+            role = 'receiver';
+        }
+
+        // get the count
+        if(val.move == null){
+            count = 0;
+        }else{
+            count = val.move.length - 1;
+        }
+
+        // get the count of the move - val.move[count].length diesnt work
+        let moveDictLength = 0;
+
+        if(count != 0){
+            for(key in val.move[count]){
+                moveDictLength ++;
+            }
+        }
+
+        // is the play yours
+        if( (count != 0) && (moveDictLength != 2) && (val.move[count][role] != null)){
+            isPlayAble = false;
+        }else{
+            isPlayAble = true;
+            if( count!= 0 && val.move[count][role] == null && (moveDictLength != 2)){
+                count--;
+            }
+        }
+
+        console.log(isPlayAble);
+
+    });
+
+}
+
+async function makeTheMove(){
+
+    if(!isPlayAble){
+        alert('Not allowed');
+        return;
+    }
+
+    count ++;
+    let updateForm = {};
+
+    // updateForm[role] = 'Rock';
+    // await database.ref('gameDetails/testingBranch/move/'+ count).update(updateForm);
+
+    // detach from the listner
+    // gameDetails.off('value', listn);
+
+    updateForm['lastMoveTime'] = Date.now();
+    updateForm['move/'+ count + '/' + role] = 'Rock';
+
+    await gameDetails.update(updateForm);
+
+    console.log('done');
 }

@@ -75,6 +75,21 @@
             </div>
         </div>
 
+        <!-- main body - experiment ignore -->
+        <div class="mainBody">
+            <button onclick="startTheListener()">
+                start the listerner
+            </button>
+            <br>
+            <br>
+            <button onclick="makeTheMove()">
+                play the move 
+            </button>
+            <div class="sampleDataHere">
+                hello
+            </div>
+        </div>
+
         <!-- Action model -->
         <div class="actionModelBackgound">
             <div class="actionModel">
@@ -99,6 +114,17 @@
         </div>
 
     </body>
+
+    <!-- The lastest version of firebase is not used because to remove possible errors: firebase is not defined -->
+    <script src="/__/firebase/7.15.0/firebase-app.js"></script>
+    <script src="/__/firebase/7.15.0/firebase-analytics.js"></script>
+    <script src="/__/firebase/7.15.0/firebase-auth.js"></script>
+    <script src="/__/firebase/7.15.0/firebase-firestore.js"></script>
+    <script src="/__/firebase/7.15.0/firebase-database.js"></script>
+    <script src="/__/firebase/7.15.0/firebase-functions.js"></script>
+
+    <!-- initialize the firebase -->
+    <script src="/__/firebase/init.js"></script>
 
     <!-- custom script -->
     <script src="js/playWithPeople.js"></script>

@@ -1,0 +1,162 @@
+
+/* css has been copied from playWithBot - for quick development - changes has been made to the file */
+
+.dark{
+    --playWithBot-color-1: white;
+    --playWithBot-color-2: rgba(255, 180, 41, 0.904);
+    --playWithBot-color-3: rgb(153, 153, 153);
+    --playWithBot-val-1: 1;
+
+    --playWithPeople-color-1: rgb(118, 197, 0);
+}
+
+.light{
+    --playWithBot-color-1: grey;
+    --playWithBot-color-2: rgb(255, 187, 61);
+    --playWithBot-color-3: rgb(204, 204, 204);
+    --playWithBot-val-1: 0;
+
+    --playWithPeople-color-1: rgb(178, 255, 61);
+}
+
+/* main window */
+
+.mainBody .row .col-4 .heading{
+    text-align: center;
+    font-size: 23px;
+    font-weight: 500;
+}
+
+.mainBody .row .col-4 .selectedContainer{
+    border: 2px solid var(--playWithBot-color-1);
+    border-radius: 10px;
+    margin: 25px auto;
+    /* padding: 25px; */
+    width: 250px;
+    height: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.player .selectedContainer img, .opponent .selectedContainer img{
+    height: 200px;
+    width: 200px;
+    filter: invert(var(--playWithBot-val-1));
+}
+
+.opponent .selectedContainer img{
+    transform: scaleX(-1);
+}
+
+.mainBody .movesContainer{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: var(--playWithBot-color-2);
+    border-radius: 10px;
+    margin: 0px 10px;
+    height: 90px;
+    font-weight: 500;
+    transition: 200ms;
+}
+
+.mainBody .stateDescription{
+    text-align: center; 
+    font-size: 18px;
+}
+
+.mainBody .movesContainer img{
+    height: 80px;
+    width: 80px;
+    transform: rotate(-90deg);
+    filter: invert(var(--playWithBot-val-1));
+    transition: 200ms;
+}
+
+.mainBody .movesContainer.optionDisabled{
+    filter: brightness(30%);
+}
+
+.mainBody .movesContainer.userOptions img:hover{
+    transform: scale(1.4);
+    cursor: pointer;
+}
+
+.score .lastRoundState{
+    padding: 20px;
+    text-align: center;
+    margin-top: 25px;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 18px;
+    background-color: var(--playWithBot-color-2);
+}
+
+.score .scoreBoard{
+    display: flex;
+}
+
+.score .scoreBoard div{
+    width: 100%;
+    margin: 10px;
+    padding: 30px;
+    text-align: center;
+    background-color: var(--playWithBot-color-3);
+    color: black;
+    font-size: 25px;
+    font-weight: 600;
+    border-radius: 10px;
+    border: 2px solid grey;
+}
+
+.timeline .timelineHeading{
+    text-align: center;
+    font-size: 18px;
+}
+
+.timeline .timelineDetails table, .timeline .timelineDetails table tr{
+    width: 100%;
+}
+
+.timeline .timelineDetails table tr td:nth-of-type(even){
+    text-align: center;
+}
+
+.timeline .timelineDetails table img{
+    height: 40px;
+    width: 40px;
+    filter: invert(var(--playWithBot-val-1));
+}
+
+.timeline .timelineDetails table tr td:last-child img{
+    transform: scaleX(-1);
+}
+
+.timeline .timelineDetails .highlight{
+    filter: contrast(10000%) invert(200%) sepia(2000%) saturate(20000%) hue-rotate(320deg);
+}
+
+/* add on the css of the playWithBot */
+
+.moveSelectedByThePlayer{
+    background-color: var(--playWithPeople-color-1);
+}
+
+.changeTheBackgound{
+    background-color: grey;
+    animation: changeTheBackgoundAnimation 12s forwards;
+}
+
+@keyframes changeTheBackgoundAnimation{
+    0%{
+        background-color: green;
+    }
+    50%{
+        background-color: yellow;
+    }
+    100%{
+        background-color: red;
+    }
+}

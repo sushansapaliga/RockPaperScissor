@@ -117,8 +117,13 @@ function updateDisplayUserName(){
     }
 }
 
-// experment - ignore 
 
+
+
+// below code is just for reference - TODO: later will be deleted
+
+// experment - ignore 
+/*
 var listn ;
 var count = 0;
 var role = 'host';
@@ -198,3 +203,4 @@ async function makeTheMove(){
 
     console.log('done');
 }
+*/

@@ -10,6 +10,7 @@
 
         <!-- custom css -->
         <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="css/playWithPeople.css">
         <link rel="stylesheet" href="css/toggleSwitch.css">
         <link rel="stylesheet" href="css/loader.css">
 
@@ -75,18 +76,70 @@
             </div>
         </div>
 
-        <!-- main body - experiment ignore -->
+        <!-- main body -->
         <div class="mainBody">
-            <button onclick="startTheListener()">
-                start the listerner
-            </button>
-            <br>
-            <br>
-            <button onclick="makeTheMove()">
-                play the move 
-            </button>
-            <div class="sampleDataHere">
-                hello
+            <div class="cardBackground">
+                <div class="row">
+                    <div class="col-4 player">
+                        <div class="heading">
+                            You
+                        </div>
+                        <div class="selectedContainer playerContainer">
+                            <div>
+                                Waiting For Your Move...
+                            </div>
+                        </div>
+                        <div class="stateDescription">
+                            Choose Your Move
+                        </div>
+                        <div class="movesContainer playerMoveSection userOptions">
+                            <img src="images/Rock.png" id="rock" alt="Rock" title="Rock">
+                            <img src="images/Paper.png" id="paper" alt="Paper" title="Paper">
+                            <img src="images/Scissor.png" id="scissor" alt="Scissor" title="Scissor">
+                        </div>
+                    </div>
+                    <div class="col-4 score">
+                        <div class="heading">
+                            Score
+                        </div>
+                        <div class="lastRoundState">
+                            No Rounds Played.
+                        </div>
+                        <div class="scoreBoard">
+                            <div class="playerScore">
+                                0
+                            </div>
+                            <div class="robotScore">
+                                0
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="timeline">
+                            <div class="timelineHeading">
+                                Timeline
+                            </div>
+                            <div class="timelineDetails">
+                                <div style="text-align: center;"> No Rounds Played. </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4 opponent">
+                        <div class="heading">
+                            {{Guest Name}}
+                        </div>
+                        <div class="selectedContainer opponentContainer">
+                            <div>
+                                Player Is Thinking...
+                            </div>
+                        </div>
+                        <div class="stateDescription">
+                            Player State
+                        </div>
+                        <div class="movesContainer">
+                            You Look Nervous!
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

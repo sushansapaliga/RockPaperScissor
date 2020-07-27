@@ -1,6 +1,5 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const { HttpsError } = require('firebase-functions/lib/providers/https');
 admin.initializeApp();
 
 exports.newUserIsSignedUp = functions.auth.user().onCreate( async (user)=>{
@@ -205,20 +204,19 @@ exports.acceptTheChallenge = functions.https.onCall(async (data, context)=>{
         },
         joinedPlayers: [],
         gameInitializedTime: 1,
-        nextPlay: 'host',
+        keyPath: 'add-later'
+    }
+
+    let constructDocRealTimeDatabase = {
         lastMoveTime: 1,
-        moves: {
-            1: {
-                host: 'not-played',
-                receiver: 'not-played'
+        players : {
+            host: {
+                playerName: '',
+                uid: '',
             },
-            2: {
-                host: 'not-played',
-                receiver: 'not-played'
-            },
-            3: {
-                host: 'not-played',
-                receiver: 'not-played'
+            receiver:{
+                playerName: '',
+                uid: receiverUID
             }
         }
     }
@@ -240,10 +238,20 @@ exports.acceptTheChallenge = functions.https.onCall(async (data, context)=>{
         );
     }
 
+    // setting up with admin realtime database 
+    const db = admin.database();
+    var keyPath = (await db.ref('gameDetails').push()).key;
+
+    // setting things for firebase store
     constructDoc.players = doc.data().players;
     constructDoc.gameInitializedTime = time;
-    constructDoc.lastMoveTime = time;
+    constructDoc.keyPath = keyPath;
 
+    // settting data for realtime database
+    constructDocRealTimeDatabase.players = constructDoc.players;
+    constructDocRealTimeDatabase.lastMoveTime = constructDoc.gameInitializedTime;
+
+    await db.ref('gameDetails/' + keyPath ).set(constructDocRealTimeDatabase);
     await admin.firestore().collection('gameDetails').add(constructDoc);
 
     return admin.firestore().collection('requestDetails').doc(docID)

@@ -138,7 +138,7 @@
     filter: contrast(10000%) invert(200%) sepia(2000%) saturate(20000%) hue-rotate(320deg);
 }
 
-/* add on the css of the playWithBot */
+/* add-on css of the playWithBot */
 
 .moveSelectedByThePlayer{
     background-color: var(--playWithPeople-color-1);

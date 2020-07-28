@@ -4,12 +4,26 @@ const menuContent = document.querySelector(".menuContent");
 const menuBtnClose = document.querySelector(".menuHeading .menuBtn");
 const bodyHTML = document.querySelector("body");
 const darkModeCheckBox = document.querySelector(".darkModeCheckBox");
-
 const actionModelBackgound = document.querySelector(".actionModelBackgound");
 const actionModel = document.querySelector(".actionModel");
 const actionModelHeader = document.querySelector(".actionModelHeader");
 const actionModelBody = document.querySelector(".actionModelBody");
 
+const playerContainer = document.querySelector(".playerContainer");
+const opponentContainer = document.querySelector(".opponentContainer");
+const playerMoveSection = document.querySelector(".playerMoveSection");
+const rockBtn = document.querySelector("#rock");
+const paperBtn = document.querySelector("#paper");
+const scissorBtn = document.querySelector("#scissor");
+
+const realTimeDatabase = firebase.database();
+// TODO: change the path key to funstion return key path value 
+var gameDetails = realTimeDatabase.ref('gameDetails/-MDGsESpcpcAXCqFMByC');
+var gameDetailsListerner;
+
+var playerRole = '';
+var roundsPlayed = 0;
+var autoUserChooseTimer;
 
 // menu drawer
 menuBtnOpen.addEventListener("click",()=>{
@@ -108,7 +122,7 @@ function flyerModel(message, status){
     },3000);
 }
 
-//updates the user front end 
+//updates the user front end name
 function updateDisplayUserName(){
     let user = firebase.auth().currentUser;
     
@@ -117,90 +131,278 @@ function updateDisplayUserName(){
     }
 }
 
+// return the winner
+function checkTheWinner(player1, player2) {
+    
+    if(player1 == player2){
+        return 'draw';
+    }else if((player1 == "Rock" && player2 == "Paper") || (player1 == "Paper" && player2 == "Scissor") || (player1 == "Scissor" && player2 == "Rock")){
+        return '2';
+    }else{
+        return '1';
+    }
+}
 
+// event binding helper functions
+function functionForRock(){
+    userChooseMove('Rock');
+}
 
+function functionForPaper(){
+    userChooseMove('Paper');
+}
 
-// below code is just for reference - TODO: later will be deleted
+function functionForScissor(){
+    userChooseMove('Scissor');
+}
 
-// experment - ignore 
-/*
-var listn ;
-var count = 0;
-var role = 'host';
-var isPlayAble = true;
+// start the user moves
+function startListeningToUserMove(){
 
-const database = firebase.database();
-const gameDetails = database.ref('gameDetails/testingBranch');
+    playerMoveSection.classList.remove("optionDisabled");
+    playerMoveSection.classList.add("userOptions");
 
-function startTheListener(){
+    //event binder
+    rockBtn.addEventListener("click",functionForRock);
+    paperBtn.addEventListener("click",functionForPaper);
+    scissorBtn.addEventListener("click",functionForScissor);
+}
 
-    listn = gameDetails.on('value', (snapShot)=>{
+// stop the user moves 
+function stopListeningToUserMove(){
 
-        let val = snapShot.val();
-        console.log(val);
+    playerMoveSection.classList.remove("userOptions");
+    playerMoveSection.classList.add("optionDisabled");
 
-        let user = firebase.auth().currentUser;
+    // event removal - disabling the button 
+    rockBtn.removeEventListener("click",functionForRock);
+    paperBtn.removeEventListener("click",functionForPaper);
+    scissorBtn.removeEventListener("click",functionForScissor);
+    
+}
 
-        // get the role
-        if(val.players.host.uid == user.uid){
-            role = 'host';
-        }else if(val.players.receiver.uid == user.uid){
-            role = 'receiver';
-        }
+// when user choose the move
+async function userChooseMove(userMove){
 
-        // get the count
-        if(val.move == null){
-            count = 0;
+    stopListeningToUserMove();
+
+    clearInterval(autoUserChooseTimer);
+
+    playerContainer.innerHTML = '<img src="images/'+ userMove +'.png" alt="'+ userMove +'">'
+
+    roundsPlayed ++;
+    let userMoveForm = {};
+    userMoveForm['lastMoveTime'] = Date.now();
+    userMoveForm['move/'+roundsPlayed+'/'+ playerRole] = userMove;
+
+    await gameDetails.update(userMoveForm);
+}
+
+// if the user doesnt choose any move within 14sec the computer will play on behlaf of him
+function autoChooseForUser(){
+    
+    autoUserChooseTimer = setTimeout(()=>{
+
+        let autoMove = Math.random()*100;
+
+        if(autoMove > 66){
+            userChooseMove('Rock');
+        }else if( autoMove > 33){
+            userChooseMove('Paper');
         }else{
-            count = val.move.length - 1;
+            userChooseMove('Scissor');
         }
 
-        // get the count of the move - val.move[count].length diesnt work
-        let moveDictLength = 0;
+        flyerModel('Round Timeout. Computer Made Move For You.', 'warning');
+    },14000);
+}
 
-        if(count != 0){
-            for(key in val.move[count]){
+// start the game once the both the player is logged in - TODO: for now both the player can play the game, without waiting for each other
+function startTheGame(){
+
+    gameDetailsListerner = gameDetails.on('value',(snapShot)=>{
+
+        stopListeningToUserMove();
+
+        let opponentRole;
+        let val = snapShot.val();
+        const user = firebase.auth().currentUser;
+
+        // set the opponent's name - TODO: must be shifted to firestore listerner
+        let opponentName ;
+
+        if(val.players.host.uid == user.uid){
+            playerRole = 'host';
+            opponentRole = 'receiver';
+            opponentName = val.players.receiver.name;
+        }else if(val.players.receiver.uid == user.uid){
+            playerRole = 'receiver';
+            opponentRole = 'host';
+            opponentName = val.players.host.name;
+        }
+
+        // opponent's name - update the front end - TODO: must be shifted to firestore listerner
+        document.querySelector(".opponentName").innerHTML = opponentName;
+
+        // get the number of rounds
+        if(val.move == null){
+            roundsPlayed = 0;
+        }else{
+            roundsPlayed = val.move.length-1;
+        }
+
+        // get the count of the move - val.move[roundsPlayed].length diesnt work
+        let moveDictLength = 0;
+        if(roundsPlayed != 0){
+            for(key in val.move[roundsPlayed]){
                 moveDictLength ++;
             }
         }
 
-        // is the play yours
-        if( (count != 0) && (moveDictLength != 2) && (val.move[count][role] != null)){
-            isPlayAble = false;
-        }else{
-            isPlayAble = true;
-            if( count!= 0 && val.move[count][role] == null && (moveDictLength != 2)){
-                count--;
-            }
+        // initial game set up - the first game
+        if(roundsPlayed == 0){
+
+            playerContainer.classList.add("changeTheBackgound");
+            playerContainer.classList.remove("moveSelectedByThePlayer");
+
+            opponentContainer.classList.add("changeTheBackgound");
+            opponentContainer.classList.remove("moveSelectedByThePlayer");
+
+            startListeningToUserMove();
+            autoChooseForUser();
+
         }
 
-        console.log(isPlayAble);
+        // start listening when the other player has made his move or we did a move 
+        if( roundsPlayed!=0 && val.move[roundsPlayed][playerRole] == null && moveDictLength == 1){
+
+            opponentContainer.innerHTML = '<div>Player Has Made The Move.</div>';
+            opponentContainer.classList.remove("changeTheBackgound");
+            opponentContainer.classList.add("moveSelectedByThePlayer");
+
+            roundsPlayed --;
+
+            startListeningToUserMove();
+
+        }else if(roundsPlayed!=0 && val.move[roundsPlayed][playerRole] != null && moveDictLength == 1){
+
+            playerContainer.innerHTML = '<img src="images/'+ val.move[roundsPlayed][playerRole] +'.png" alt="'+ val.move[roundsPlayed][playerRole] +'">';
+            playerContainer.classList.remove("changeTheBackgound");
+            playerContainer.classList.add("moveSelectedByThePlayer");
+        }
+
+        // when both players have made the move, display the results and start a new game
+        if(roundsPlayed!=0 && moveDictLength == 2){
+            
+            // display the results
+            playerContainer.innerHTML = '<img src="images/'+ val.move[roundsPlayed][playerRole] +'.png" alt="'+ val.move[roundsPlayed][playerRole] +'">';
+            playerContainer.classList.remove("changeTheBackgound");
+            playerContainer.classList.add("moveSelectedByThePlayer");
+
+            opponentContainer.innerHTML = '<img src="images/'+ val.move[roundsPlayed][opponentRole] +'.png" alt="'+ val.move[roundsPlayed][opponentRole] +'">';
+            opponentContainer.classList.remove("changeTheBackgound");
+            opponentContainer.classList.add("moveSelectedByThePlayer");
+
+            switch( checkTheWinner( val.move[roundsPlayed][opponentRole], val.move[roundsPlayed][playerRole])){
+                case "draw":
+                    document.querySelector('.lastRoundState').innerHTML = 'It Was A Draw.';
+                    break;
+                case "1":
+                    document.querySelector('.lastRoundState').innerHTML = 'Opponent Won The Round.';
+                    break;
+                case "2":
+                    document.querySelector('.lastRoundState').innerHTML = 'You Won The Round.';
+                    break;
+            }
+
+            // update the timeline and score of the player
+            let timelineString = '<table>';
+            let numberOfRounds = roundsPlayed;
+            let displayCount = 3;
+            let playerScore = 0;
+            let opponentScore = 0;
+
+            while(numberOfRounds != 0){
+
+                let winnerPlayer = checkTheWinner(val.move[numberOfRounds][opponentRole], val.move[numberOfRounds][playerRole]);
+
+                if(winnerPlayer == '1'){
+                    opponentScore ++;
+                }else if(winnerPlayer == '2'){
+                    playerScore ++;
+                }
+
+                if(displayCount !=0){
+
+                    let currentGameRoundStr = '<tr><td>'+ numberOfRounds +'.</td>';
+
+                    switch(winnerPlayer){
+                        case 'draw':
+                            currentGameRoundStr += '<td><img src="images/'+ val.move[numberOfRounds][playerRole] +'.png" alt="'+ val.move[numberOfRounds][playerRole] +'"></td>';
+                            currentGameRoundStr += '<td>-</td>';
+                            currentGameRoundStr += '<td><img src="images/'+ val.move[numberOfRounds][opponentRole] +'.png" alt="'+ val.move[numberOfRounds][opponentRole] +'"></td>';
+                            break;
+                        case '1':
+                            currentGameRoundStr += '<td><img src="images/'+ val.move[numberOfRounds][playerRole] +'.png" alt="'+ val.move[numberOfRounds][playerRole] +'"></td>';
+                            currentGameRoundStr += '<td>-</td>';
+                            currentGameRoundStr += '<td><img class="highlight" src="images/'+ val.move[numberOfRounds][opponentRole] +'.png" alt="'+ val.move[numberOfRounds][opponentRole] +'"></td>';
+                            break;
+                        case '2':
+                            currentGameRoundStr += '<td><img class="highlight" src="images/'+ val.move[numberOfRounds][playerRole] +'.png" alt="'+ val.move[numberOfRounds][playerRole] +'"></td>';
+                            currentGameRoundStr += '<td>-</td>';
+                            currentGameRoundStr += '<td><img src="images/'+ val.move[numberOfRounds][opponentRole] +'.png" alt="'+ val.move[numberOfRounds][opponentRole] +'"></td>';
+                            break;
+                    }
+
+                    currentGameRoundStr += '</tr>';
+                    timelineString += currentGameRoundStr;
+
+                    displayCount --;
+                }
+
+                numberOfRounds --;
+            }
+
+            timelineString += '</table>';
+
+            // update the front end with timeline and players score
+            document.querySelector('.timelineDetails').innerHTML = timelineString;
+            document.querySelector('.playerScore').innerHTML = playerScore;
+            document.querySelector('.opponentScore').innerHTML = opponentScore;
+
+            // start a new game
+            setTimeout(()=>{
+
+                playerContainer.innerHTML = '<div>Waiting For Your Move...</div>';
+                playerContainer.classList.add("changeTheBackgound");
+                playerContainer.classList.remove("moveSelectedByThePlayer");
+
+                opponentContainer.innerHTML = '<div>Player Is Thinking...</div>';
+                opponentContainer.classList.add("changeTheBackgound");
+                opponentContainer.classList.remove("moveSelectedByThePlayer");
+
+                startListeningToUserMove();
+                autoChooseForUser();
+
+            },3000);
+        }
 
     });
-
 }
 
-async function makeTheMove(){
+// only signed in user is allowed - else redirect the new user to index page
+firebase.auth().onAuthStateChanged((user)=>{
 
-    if(!isPlayAble){
-        alert('Not allowed');
-        return;
+    if(user){
+        
+        fetchTheTheme();
+        updateDisplayUserName();
+
+        // TODO: call the funtions for listening
+
+        // TODO: remove it later
+        startTheGame();
+    }else{
+        window.location.replace("index.html");
     }
-
-    count ++;
-    let updateForm = {};
-
-    // updateForm[role] = 'Rock';
-    // await database.ref('gameDetails/testingBranch/move/'+ count).update(updateForm);
-
-    // detach from the listner
-    // gameDetails.off('value', listn);
-
-    updateForm['lastMoveTime'] = Date.now();
-    updateForm['move/'+ count + '/' + role] = 'Rock';
-
-    await gameDetails.update(updateForm);
-
-    console.log('done');
-}
-*/
+});

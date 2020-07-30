@@ -2,6 +2,7 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
 
+// when new user is signed in
 exports.newUserIsSignedUp = functions.auth.user().onCreate( async (user)=>{
     
     var uid = user.uid;
@@ -21,6 +22,7 @@ exports.newUserIsSignedUp = functions.auth.user().onCreate( async (user)=>{
 
 });
 
+// when user changes the his gama name
 exports.requestForNameChange = functions.https.onCall( async (data, context)=>{
 
     if(!context.auth){
@@ -38,7 +40,7 @@ exports.requestForNameChange = functions.https.onCall( async (data, context)=>{
             'invalid-argument',
             'Premature Request Has Been Sent. Execution Failed.'
         );
-    }else if(/[^A-Za-z_,!\d]/.test(userName)){
+    }else if(/[^A-Za-z_,!\d\s]/.test(userName)){
         throw new functions.https.HttpsError(
             'invalid-argument',
             'Special Characters In Your Game Name. Update Failed.'
@@ -66,6 +68,7 @@ exports.requestForNameChange = functions.https.onCall( async (data, context)=>{
 
 });
 
+//update the last seen time and also get online players
 exports.fetchOnlinePlayers = functions.https.onCall(async (data, context)=>{
 
     if(!context.auth){
@@ -108,6 +111,7 @@ exports.fetchOnlinePlayers = functions.https.onCall(async (data, context)=>{
     });
 });
 
+//challenage a player
 exports.invitePlayerToGame = functions.https.onCall(async (data, context)=>{
 
     if(!context.auth){
@@ -178,6 +182,7 @@ exports.invitePlayerToGame = functions.https.onCall(async (data, context)=>{
 
 });
 
+//when user accepts the challenge
 exports.acceptTheChallenge = functions.https.onCall(async (data, context)=>{
 
     if(!context.auth){
@@ -192,16 +197,7 @@ exports.acceptTheChallenge = functions.https.onCall(async (data, context)=>{
 
     let constructDoc = {
         status: 'open',
-        players : {
-            host: {
-                playerName: '',
-                uid: '',
-            },
-            receiver:{
-                playerName: '',
-                uid: receiverUID
-            }
-        },
+        players : [],
         joinedPlayers: [],
         gameInitializedTime: 1,
         keyPath: 'add-later'
@@ -243,14 +239,15 @@ exports.acceptTheChallenge = functions.https.onCall(async (data, context)=>{
     var keyPath = (await db.ref('gameDetails').push()).key;
 
     // setting things for firebase store
-    constructDoc.players = doc.data().players;
+    constructDoc.players = [doc.data().players.host.uid, doc.data().players.receiver.uid];
     constructDoc.gameInitializedTime = time;
     constructDoc.keyPath = keyPath;
 
     // settting data for realtime database
-    constructDocRealTimeDatabase.players = constructDoc.players;
+    constructDocRealTimeDatabase.players = doc.data().players;
     constructDocRealTimeDatabase.lastMoveTime = constructDoc.gameInitializedTime;
 
+    //pushing data to database
     await db.ref('gameDetails/' + keyPath ).set(constructDocRealTimeDatabase);
     await admin.firestore().collection('gameDetails').add(constructDoc);
 
@@ -259,4 +256,66 @@ exports.acceptTheChallenge = functions.https.onCall(async (data, context)=>{
         gameStatus: 'accepted'
     });
 
+});
+
+// get the game details
+exports.getGameDetails = functions.https.onCall(async (data, context)=>{
+
+    if(!context.auth){
+        throw new functions.https.HttpsError(
+            'unauthenticated',
+            'Only Authenticated User Can Make Request'
+        );
+    }
+
+    const time = Date.now();
+    const playerUID = context.auth.uid;
+    const doc = await admin.firestore().collection('gameDetails').where('gameInitializedTime','>=', time-30000)
+                                                                .where('players', 'array-contains', playerUID)
+                                                                .where('status','==','open')
+                                                                .orderBy('gameInitializedTime', 'desc')
+                                                                .limit(1)
+                                                                .get();
+
+    let dataToSendBack = {
+        keyPath: '',
+        docID: ''
+    }
+
+    let count = 0;
+
+    doc.forEach( async (snapShot)=>{
+
+        dataToSendBack.keyPath = snapShot.data()['keyPath'];
+        dataToSendBack.docID = snapShot.id;
+        count++;
+
+        let joinedPlayersArr = snapShot.data()['joinedPlayers'];
+        let status = 'open';
+
+        if(joinedPlayersArr.indexOf(playerUID) == -1){
+            joinedPlayersArr.push(playerUID);
+        }
+
+        if(joinedPlayersArr.length == 2){
+            status = 'playing';
+        }
+
+        await admin.firestore().collection('gameDetails').doc(snapShot.id).update({
+            joinedPlayers: joinedPlayersArr,
+            status: status
+        });
+    });
+
+    // check if the user has already joined the game or not
+    if(count == 0){
+        throw new functions.https.HttpsError(
+            'permission-denied',
+            'You Have No Game Challenges.'
+        );
+    }
+
+    return new Promise((resolve, reject)=>{
+        resolve(dataToSendBack);
+    });
 });

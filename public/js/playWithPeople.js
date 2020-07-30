@@ -17,9 +17,9 @@ const paperBtn = document.querySelector("#paper");
 const scissorBtn = document.querySelector("#scissor");
 
 const realTimeDatabase = firebase.database();
-// TODO: change the path key to funstion return key path value 
-var gameDetails = realTimeDatabase.ref('gameDetails/-MDGsESpcpcAXCqFMByC');
+var gameDetails;
 var gameDetailsListerner;
+var waitingForAnotherPlayerListener;
 
 var playerRole = '';
 var roundsPlayed = 0;
@@ -217,7 +217,7 @@ function autoChooseForUser(){
     },14000);
 }
 
-// start the game once the both the player is logged in - TODO: for now both the player can play the game, without waiting for each other
+// start the game once the both the player is logged in 
 function startTheGame(){
 
     gameDetailsListerner = gameDetails.on('value',(snapShot)=>{
@@ -228,7 +228,7 @@ function startTheGame(){
         let val = snapShot.val();
         const user = firebase.auth().currentUser;
 
-        // set the opponent's name - TODO: must be shifted to firestore listerner
+        // set the opponent's name 
         let opponentName ;
 
         if(val.players.host.uid == user.uid){
@@ -241,7 +241,7 @@ function startTheGame(){
             opponentName = val.players.host.name;
         }
 
-        // opponent's name - update the front end - TODO: must be shifted to firestore listerner
+        // opponent's name - update the front end
         document.querySelector(".opponentName").innerHTML = opponentName;
 
         // get the number of rounds
@@ -390,6 +390,39 @@ function startTheGame(){
     });
 }
 
+function getTheDetailsForGame(){
+
+    const getGameDetail = firebase.functions().httpsCallable('getGameDetails');
+    getGameDetail()
+    .then((details)=>{
+        
+        waitingForAnotherPlayerListener = firebase.firestore().collection("gameDetails")
+        .doc(details.data.docID)
+        .onSnapshot((snapShot)=>{
+
+            if(snapShot.data().status == "playing"){
+                gameDetails = realTimeDatabase.ref('gameDetails/'+ snapShot.data().keyPath);
+
+                // stop the listener
+                waitingForAnotherPlayerListener();
+
+                document.querySelectorAll(".pageLoading").forEach((element)=>{
+                    element.classList.remove("pageLoading");
+                });
+
+                startTheGame();
+                actionPanelClose();
+
+            }else{
+                actionPanelOpen('Waiting','Waiting For Opponent To Join Game...');
+            }
+        });
+
+    }).catch((e)=>{
+        window.location.replace("index.html");
+    });
+}
+
 // only signed in user is allowed - else redirect the new user to index page
 firebase.auth().onAuthStateChanged((user)=>{
 
@@ -397,11 +430,7 @@ firebase.auth().onAuthStateChanged((user)=>{
         
         fetchTheTheme();
         updateDisplayUserName();
-
-        // TODO: call the funtions for listening
-
-        // TODO: remove it later
-        startTheGame();
+        getTheDetailsForGame();
     }else{
         window.location.replace("index.html");
     }

@@ -117,7 +117,7 @@ changeUserNameForm.addEventListener("submit",(e)=>{
     if(userName.length == 0){
         flyerModel("Cannot Set Your Game Name As Empty. Update Failed.", "failed");
         return;
-    }else if(/[^A-Za-z_,!\d]/.test(userName)){
+    }else if(/[^A-Za-z_,!\d\s]/.test(userName)){
         flyerModel("Special Characters In Your Game Name. Update Failed.", "failed");
         return;
     }else if(userName.length > 20){
@@ -275,10 +275,6 @@ function acceptChallangeRequest(docID){
     }).then(()=>{
         window.location.replace("playWithPeople.html");
     }).catch((e)=>{
-
-        console.log(e);
-        console.log(e.message);
-
         flyerModel(e.message, "failed");
         fetchOnlinePlayers();
         lookForChallenges();
@@ -313,10 +309,14 @@ function fetchOnlinePlayers(){
         onlinePlayerRequestMaker = setTimeout(fetchOnlinePlayers, 30000);
     }).catch((e)=>{
 
-        console.log(e.message);
+        onlinePlayerRequestMaker = setTimeout(fetchOnlinePlayers, 30000);
 
-        flyerModel(e.message, "failed");
-        clearInterval(onlinePlayerRequestMaker);
+        // PATCH: When a new user signed in there is a error thrown from firebase function- Working a way around.
+        // Error: user personalised doc is not found.
+        // Resource: https://firebase.google.com/docs/functions/firestore-events#limitations_and_guarantees
+        //console.log(e.message);
+        //flyerModel(e.message, "failed");
+        //clearInterval(onlinePlayerRequestMaker);
     });
 }
 

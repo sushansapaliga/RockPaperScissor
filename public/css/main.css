@@ -139,6 +139,20 @@ header nav span.menuBtn:hover{
     margin: -5px 0px 5px 20px;
 }
 
+.menuBackground .menuContent .aboutMe{
+    display: flex;
+    justify-content: space-around;
+}
+
+.menuBackground .menuContent .aboutMe a{
+    text-decoration: none;
+    color: rgb(255, 176, 30);
+}
+
+.menuBackground .menuContent .aboutMe a:hover{
+    color: orange;
+}
+
 /* user name update */
 .userSetting .settingHeading{
     font-size: 30px;

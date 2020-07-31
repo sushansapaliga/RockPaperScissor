@@ -1,0 +1,25 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /userDetails/{user}{
+    allow read: if false;
+    allow write: if false;
+    }
+    
+    match /requestDetails/{details}{
+    allow read: if (( request.auth != null ) && 
+    								(( resource.data.players.host.uid == request.auth.uid ) || 
+                    ( resource.data.players.receiver.uid == request.auth.uid )) &&
+                    ( request.time.toMillis() - 120000 < resource.data.requestGameTime ));
+                    
+    allow write: if false;
+    }
+    
+    match /gameDetails/{details}{
+    allow read: if (( request.auth != null ) &&
+    								( request.auth.uid in resource.data.players ) &&
+                    ( request.time.toMillis() - 120000 < resource.data.gameInitializedTime ));
+    allow write: if false;
+    }
+  }
+}

@@ -246,6 +246,7 @@ function challengeThePlayer(userUID){
         setTimeout(()=>{
             waitingRequest();
             actionPanelClose();
+            flyerModel('Player Didnt Accept The Challenge.');
 
             // restart the normal process
             fetchOnlinePlayers();
@@ -309,9 +310,10 @@ function fetchOnlinePlayers(){
         onlinePlayerRequestMaker = setTimeout(fetchOnlinePlayers, 30000);
     }).catch((e)=>{
 
-        onlinePlayerRequestMaker = setTimeout(fetchOnlinePlayers, 30000);
+        // PATCH : callable the function after 2 secs once all user related docs are settled
+        onlinePlayerRequestMaker = setTimeout(fetchOnlinePlayers, 2000);
 
-        // PATCH: When a new user signed in there is a error thrown from firebase function- Working a way around.
+        // PATCH: When a new user signed in there is a error thrown from firebase function - Working a way around.
         // Error: user personalised doc is not found.
         // Resource: https://firebase.google.com/docs/functions/firestore-events#limitations_and_guarantees
         //console.log(e.message);

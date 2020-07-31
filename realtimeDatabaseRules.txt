@@ -1,0 +1,32 @@
+{
+  "rules": {
+    "gameDetails":{
+      "$games":{
+        ".read": " (auth != null) && ((root.child('gameDetails').child($games).child('players').child('host').child('uid').val() == auth.uid) || (root.child('gameDetails').child($games).child('players').child('receiver').child('uid').val() == auth.uid) )",
+          
+        "players":{
+          ".write": "!data.exists()",
+        },
+        
+        "lastMoveTime":{
+          ".write":" (auth != null) && ((root.child('gameDetails').child($games).child('players').child('host').child('uid').val() == auth.uid) || (root.child('gameDetails').child($games).child('players').child('receiver').child('uid').val() == auth.uid) )",
+          ".validate": "newData.isNumber() && (newData.val() < now + 1000) && (newData.val() > now-40000)" 
+        },
+          
+        "move":{
+          ".write":" (auth != null) && ((root.child('gameDetails').child($games).child('players').child('host').child('uid').val() == auth.uid) || (root.child('gameDetails').child($games).child('players').child('receiver').child('uid').val() == auth.uid) )",
+            
+          "$moves":{
+          	"host":{
+              ".validate": "newData.isString() && (newData.val() == '' || newData.val() == 'Paper' || newData.val() == 'Rock' || newData.val() == 'Scissor' ) "
+            },
+            "receiver":{
+              ".validate": "newData.isString() && (newData.val() == '' || newData.val() == 'Paper' || newData.val() == 'Rock' || newData.val() == 'Scissor' ) "
+            }
+          }
+        }
+        
+      }
+    }
+  }
+}

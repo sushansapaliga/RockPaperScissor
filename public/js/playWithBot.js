@@ -226,7 +226,6 @@ function userChooseMove(userMove){
                 break;
         }
 
-        // TODO: update the timeline
         updateTimeline(robotMove, userMove);
         // TODO: update the state of the robot
 
